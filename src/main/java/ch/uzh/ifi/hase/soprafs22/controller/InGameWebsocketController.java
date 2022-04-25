@@ -25,7 +25,7 @@ public class InGameWebsocketController {
     
     @MessageMapping("/move")
     @SendTo("/client/move")
-    public MoveGetDTO exampleMove(MovePostDTO exampleMovePostDTO, Principal principal, Long gameId) throws Exception {
+    public MoveGetDTO exampleMove(MovePostDTO exampleMovePostDTO, Long gameId, Principal principal) throws Exception {
         // get move from the client
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(exampleMovePostDTO);
 
