@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 import ch.uzh.ifi.hase.soprafs22.entity.Lobby;
 
 import ch.uzh.ifi.hase.soprafs22.rest.dto.LobbyGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserIdDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.IdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.LobbyService;
 
@@ -35,9 +35,9 @@ public class LobbyController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
 
-    public LobbyGetDTO createLobby(@RequestBody UserIdDTO lobbyLeaderId) {
+    public LobbyGetDTO createLobby(@RequestBody IdDTO lobbyLeaderId) {
 
-        Lobby createdLobby = lobbyService.createLobby(lobbyLeaderId.getLobbyLeaderId());
+        Lobby createdLobby = lobbyService.createLobby(lobbyLeaderId.getId());
         return DTOMapper.INSTANCE.convertEntityToLobbyGetDTO(createdLobby);
 
     }

@@ -6,7 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -44,13 +46,30 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Instant createdDate;
 
+    /* @OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "game_id")
+    private List<Game> games; */
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        // this.games = new ArrayList<Game>() ;
     }
 
     public User() {
     }
+
+    /* public void addGame(Game game){
+        this.games.add(game);
+    }
+
+    public void removeGame(Game game){
+        this.games.remove(game) ;
+    }
+
+    public List<Game> getGames() {
+        return this.games;
+    } */
 
     public Long getId() {
         return id;
@@ -99,4 +118,6 @@ public class User implements Serializable {
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }
+
+    
 }

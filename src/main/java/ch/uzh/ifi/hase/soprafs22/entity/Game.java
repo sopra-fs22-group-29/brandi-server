@@ -37,6 +37,8 @@ public class Game {
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
+    public Game() {}
+
     public Game(User player) {    
         this.gameOver = false;
         this.gameOn = false;
@@ -73,22 +75,23 @@ public class Game {
         this.playerStates.add(new PlayerState(player, 0, true, playerHand));
     }
 
-    public void addPlayer(User player){
+    public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             this.initPlayerState(player);
+            // player.addGame(this);
+            if(this.isFull()){
+                this.startGame();
+            }
+            return true;
         } else{
             // TODO: Should this throw error?
-            System.out.println("Can't add new player");
+            System.out.println("Can't add new player with id " + player.getId());
+            return false;
         }
-
-        if(this.isFull()){
-            this.startGame();
-        }
-
     }
 
     public Boolean isFull(){
-        return this.playerStates.size() < 4;
+        return this.playerStates.size() >= 4;
     }
 
     public void startGame(){

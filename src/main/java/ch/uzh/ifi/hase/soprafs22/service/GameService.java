@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -66,6 +68,25 @@ public class GameService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobbyleader");
         }
         
+    }
+
+    public Game joinGame(Long gameId, String username){
+        Optional<Game> optGame = gameRepository.findById(gameId);
+        if(optGame.isPresent()){
+            Game game = optGame.get();
+            User user = userRepository.findByUsername(username);
+            // System.out.println(user.getGameIds());
+            Boolean added = game.addPlayer(user);
+            if(!added) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't add Player"); }
+            game = gameRepository.saveAndFlush(game);
+            return game;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
+        }
+    }
+
+    public List<Game> getGames() {
+        return gameRepository.findAll();
     }
     
 }
