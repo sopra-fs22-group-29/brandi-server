@@ -51,11 +51,11 @@ public class GameTurn {
     }
 
     public void setInvokeTrue() {
-        canInvoke = true;
+        this.canInvoke = true;
     }
 
     public void setPossibleMoves(List<Integer> possibleMoves) {
-        possibleMoves = possibleMoves;
+        this.possibleMoves = possibleMoves;
     }
 
     public void playCard(Card card, PlayerState activePlayer, Ball ball) {
@@ -74,9 +74,6 @@ public class GameTurn {
     public void ballChosen(Card card, Ball ball) {
 
         calculateMove(card);
-
-        // TODO: length of the move
-        int moveLength = 0;
         
         //int postPos = ball.setPosition(startPos + move);
 
@@ -86,6 +83,13 @@ public class GameTurn {
         ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,10,20,30);
 
         int startPos = ball.getPosition();
+
+        // for (Ball balll : balls) {
+        //     if (startingPoints.contains(balll.getPosition())) {
+        //         for (int possibleMove : possibleMoves) {
+        //         }
+        //     }
+        // }
 
         for (int possibleMove : possibleMoves) {
             for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
