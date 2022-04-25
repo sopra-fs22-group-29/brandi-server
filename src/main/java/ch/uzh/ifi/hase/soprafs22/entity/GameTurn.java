@@ -21,8 +21,13 @@ public class GameTurn {
     // TODO: 4. Clicks on one of the highlighted positions to go there ???
 
     private PlayerState activePlayer;
-    private PlayerHand playerHand;
     private Boolean canInvoke;
+    private List<Integer> possibleMoves;
+
+    // TODO: THESE WILL COME FROM BOARDSTATE and PLAYERHAND
+    private BoardState boardState;
+    private List<Ball> balls;
+    private PlayerHand playerHand;
 
     // Normal cards: TWO, THREE, FIVE, SIX, EIGHT, NINE, TEN, QUEEN
     // TODO: THIS COULD BE SEPARATE
@@ -39,11 +44,18 @@ public class GameTurn {
 
     public GameTurn(PlayerState activePlayer) {
         this.activePlayer = activePlayer;
+        possibleMoves = new ArrayList<Integer>();
+
         this.playerHand = activePlayer.getPlayerHand();
+        this.balls = boardState.getBalls();
     }
 
     public void setInvokeTrue() {
         canInvoke = true;
+    }
+
+    public void setPossibleMoves(List<Integer> possibleMoves) {
+        possibleMoves = possibleMoves;
     }
 
     public void playCard(Card card, PlayerState activePlayer, Ball ball) {
@@ -55,9 +67,11 @@ public class GameTurn {
     }
 
     public void makeMove(Card card, Ball ball) {
-        // TODO: move with a given card
 
-        int startPos = ball.getPosition();
+    }
+
+    // Highlight possible moves for a given ball
+    public void ballChosen(Card card, Ball ball) {
 
         calculateMove(card);
 
@@ -69,35 +83,31 @@ public class GameTurn {
         // Check if any ball on the way on starting point
         // TODO: DETERMINE WHICH POSITIONS WILL BE STARTING POINTS
         // ATM RANDOM VALUES
-        // ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,10,20,30);
+        ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,10,20,30);
 
-        // int startPos = ball.getPosition();
+        int startPos = ball.getPosition();
 
-        // for (int possibleMove : possibleMoves) {
-        //     for (int i = startPos + 1; i <= startPos + moveLength; i++) {
-        //         for (Ball ball : balls) {
-        //             if (startingPoints.contains(ball.getPosition())) {
-        //                 possibleMoves.remove(possibleMove);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // CHECK IF KILLED ANYTHING WHEN MOVING
-        // for (Ball ball : balls) {}
-        // if (ball.getPosition() == )
+        for (int possibleMove : possibleMoves) {
+            for (int i = startPos + 1; i <= startPos + moveLength; i++) {
+                for (Ball balll : balls) {
+                    if (startingPoints.contains(balll.getPosition())) {
+                        possibleMoves.remove(possibleMove);
+                    }
+                }
+            }
+        }
     }
 
     // FOR SINGLE CARD
-    public List<Integer> calculateMove(Card card) {
+    public void calculateMove(Card card) {
 
         Rank cardRank = card.getRank();
         if (cardRank != Rank.JOKER) {
-            return getPossibleMoves(cardRank);
+            getPossibleMoves(cardRank);
         }
         else {
             Rank jokerRank = chooseJokerRank();
-            return getPossibleMoves(jokerRank);
+            getPossibleMoves(jokerRank);
         }
     }
 
@@ -117,7 +127,7 @@ public class GameTurn {
     //     return possibleMoves;
     // }
 
-    public List<Integer> getPossibleMoves(Rank cardRank) {
+    public void getPossibleMoves(Rank cardRank) {
         List<Integer> possibleMoves = new ArrayList<Integer>();
 
         if (normalCards.get(cardRank) != null) {
@@ -170,7 +180,8 @@ public class GameTurn {
         possibleMoves.clear();
         possibleMoves.addAll(set);
 
-        return possibleMoves;
+        setPossibleMoves(possibleMoves);
+        //return possibleMoves;
     }
 
     public Rank chooseJokerRank() {
