@@ -88,7 +88,7 @@ public class GameTurn {
         int startPos = ball.getPosition();
 
         for (int possibleMove : possibleMoves) {
-            for (int i = startPos + 1; i <= startPos + moveLength; i++) {
+            for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
                 for (Ball balll : balls) {
                     if (startingPoints.contains(balll.getPosition())) {
                         possibleMoves.remove(possibleMove);
