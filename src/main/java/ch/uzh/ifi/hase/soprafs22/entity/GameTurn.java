@@ -1,25 +1,32 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
 
 public class GameTurn {
 
-    //TODO: Change to user
-    private Player activePlayer;
+    //TODO: I guess we go with PlayerState instead of player everywhere?
 
-    public GameTurn(Player activePlayer) {
+    private PlayerState activePlayer;
+    private PlayerHand playerHand;
+
+    public GameTurn(PlayerState activePlayer) {
         this.activePlayer = activePlayer;
+        this.playerHand = activePlayer.getPlayerHand();
     }
 
-    public void playCard(Card card) {
+    public void playCard(Card card, PlayerState activePlayer) {
         // TODO: will need to remove card from player's hand and
         // make move with makeMove
+        // have to remove exact card; need to take care of possible multiplicities in hand
+        makeMove(card.getRank());
+        playerHand.deleteCard(card);
     }
 
     public int calculateMoves() {
         // TODO: return possible moves combination
         // not sure about return type here
+        
+
         int someInt = 0;
         return someInt;
     }
