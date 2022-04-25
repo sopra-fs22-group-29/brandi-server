@@ -46,20 +46,20 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Instant createdDate;
 
-    /* @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "game_id")
-    private List<Game> games; */
+    private List<Game> games;
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        // this.games = new ArrayList<Game>() ;
+        this.games = new ArrayList<Game>() ;
     }
 
     public User() {
     }
 
-    /* public void addGame(Game game){
+    public void addGame(Game game){
         this.games.add(game);
     }
 
@@ -69,7 +69,7 @@ public class User implements Serializable {
 
     public List<Game> getGames() {
         return this.games;
-    } */
+    }
 
     public Long getId() {
         return id;

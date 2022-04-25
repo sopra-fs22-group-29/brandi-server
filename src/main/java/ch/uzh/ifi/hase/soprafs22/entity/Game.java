@@ -45,7 +45,7 @@ public class Game {
         this.roundsPlayed = 0;
         this.deck = new Deck();
         this.playerStates = new ArrayList<PlayerState>();
-        this.initPlayerState(player);
+        this.addPlayer(player);
         this.initBoardState();
         // this.startNewRound();
     }
@@ -78,7 +78,7 @@ public class Game {
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             this.initPlayerState(player);
-            // player.addGame(this);
+            player.addGame(this);
             if(this.isFull()){
                 this.startGame();
             }

@@ -60,8 +60,7 @@ public class GameService {
         Optional<User> lobbyLeader = this.userRepository.findById(lobbyLeaderId);
         if(lobbyLeader.isPresent()){
             Game newGame = new Game(lobbyLeader.get());
-            newGame = gameRepository.save(newGame);
-            gameRepository.flush();
+            newGame = gameRepository.saveAndFlush(newGame);
             System.out.println("Created Information for Game: " + newGame.getId() + newGame.getPlayerStates());
             return newGame;
         } else{
