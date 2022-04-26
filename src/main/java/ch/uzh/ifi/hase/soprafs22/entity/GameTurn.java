@@ -62,12 +62,18 @@ public class GameTurn {
         // TODO: will need to remove card from player's hand and
         // make move with makeMove
         // have to remove exact card; need to take care of possible multiplicities in hand
-        makeMove(card, ball);
+        // will need defined destination
+        // int chosenMove = someInt;
+        makeMove(ball);
+        // activePlayer.getHand().deleteCard(card);
         playerHand.deleteCard(card);
+
+        // TODO: WEBSOCKET CALL TO DISPLAY THE MOVE AND DELETE CARD
     }
 
-    public void makeMove(Card card, Ball ball) {
-
+    public void makeMove(Ball ball) {
+        int startPos = ball.getPosition();
+        //ball.setPosition(startPos + chosenMove);
     }
 
     // Highlight possible moves for a given ball
@@ -78,9 +84,7 @@ public class GameTurn {
         //int postPos = ball.setPosition(startPos + move);
 
         // Check if any ball on the way on starting point
-        // TODO: DETERMINE WHICH POSITIONS WILL BE STARTING POINTS
-        // ATM RANDOM VALUES
-        ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,10,20,30);
+        ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,16,32,48);
 
         int startPos = ball.getPosition();
 
@@ -100,6 +104,8 @@ public class GameTurn {
                 }
             }
         }
+
+        // TODO: WEBSOCKET CALL TO HIGLIGHT POSSIBLE MOVES AFTER CHOOSING BALL
     }
 
     // FOR SINGLE CARD
@@ -113,6 +119,8 @@ public class GameTurn {
             Rank jokerRank = chooseJokerRank();
             getPossibleMoves(jokerRank);
         }
+
+        //TODO: WEBSOCKET CALL TO HIGHLIGHT POSSIBLE MOVES WITH CHOSEN CARD
     }
 
     // FOR THE WHOLE HAND
@@ -159,7 +167,8 @@ public class GameTurn {
 
             // TODO: COMPLETE IMPLEMENTATION OF THIS WILL REQUIRE BOARDSTATE
             // for (Ball ball : balls) {
-            // if (ball.getState() == BallState.BOARD) {
+            // if (ball.getState() == BallState.BOARD &&
+            // ball.getPosition != 0/16/32/48) {
             // possibleMoves.add(ball.getPosition());
             // }
             // }
