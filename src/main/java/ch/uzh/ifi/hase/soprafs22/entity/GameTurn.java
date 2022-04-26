@@ -21,6 +21,7 @@ public class GameTurn {
     // TODO: 4. Clicks on one of the highlighted positions to go there ???
 
     private PlayerState activePlayer;
+    private Ball chosenBall;
     private Boolean canInvoke;
     private List<Integer> possibleMoves;
 
@@ -28,6 +29,16 @@ public class GameTurn {
     private BoardState boardState;
     private List<Ball> balls;
     private PlayerHand playerHand;
+
+    public GameTurn(PlayerState activePlayer) {
+        this.activePlayer = activePlayer;
+        possibleMoves = new ArrayList<Integer>();
+
+        this.playerHand = activePlayer.getPlayerHand();
+        this.balls = boardState.getBalls();
+    }
+
+    ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,16,32,48);
 
     // Normal cards: TWO, THREE, FIVE, SIX, EIGHT, NINE, TEN, QUEEN
     // TODO: THIS COULD BE SEPARATE
@@ -42,22 +53,6 @@ public class GameTurn {
 
     // Special Cards: FOUR, SEVEN, JACK, KING, ACE, JOKER
 
-    public GameTurn(PlayerState activePlayer) {
-        this.activePlayer = activePlayer;
-        possibleMoves = new ArrayList<Integer>();
-
-        this.playerHand = activePlayer.getPlayerHand();
-        this.balls = boardState.getBalls();
-    }
-
-    public void setInvokeTrue() {
-        this.canInvoke = true;
-    }
-
-    public void setPossibleMoves(List<Integer> possibleMoves) {
-        this.possibleMoves = possibleMoves;
-    }
-
     public void playCard(Card card, PlayerState activePlayer, Ball ball) {
         // TODO: will need to remove card from player's hand and
         // make move with makeMove
@@ -71,21 +66,20 @@ public class GameTurn {
         // TODO: WEBSOCKET CALL TO DISPLAY THE MOVE AND DELETE CARD
     }
 
+    // TODO: this should get destination from client and then update ballPos accordingly
     public void makeMove(Ball ball) {
         int startPos = ball.getPosition();
         //ball.setPosition(startPos + chosenMove);
     }
 
     // Highlight possible moves for a given ball
-    public void ballChosen(Card card, Ball ball) {
+    public void ballChoose(Ball ball) {
 
-        calculateMove(card);
+        //calculateMove(card);
         
         //int postPos = ball.setPosition(startPos + move);
 
         // Check if any ball on the way on starting point
-        ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,16,32,48);
-
         int startPos = ball.getPosition();
 
         // for (Ball balll : balls) {
@@ -123,22 +117,6 @@ public class GameTurn {
         //TODO: WEBSOCKET CALL TO HIGHLIGHT POSSIBLE MOVES WITH CHOSEN CARD
     }
 
-    // FOR THE WHOLE HAND
-    // public List<Integer> calculateMoves() {
-
-    //     // get player's cards
-    //     List<Card> activeCards = playerHand.getActiveCards();
-
-    //     // for each card in the hand calculate the possible moves
-    //     for (Card card : activeCards) {
-
-    //         Rank cardRank = card.getRank();
-    //         getPossibleMoves(cardRank);
-    //     }
-
-    //     return possibleMoves;
-    // }
-
     public void getPossibleMoves(Rank cardRank) {
         List<Integer> possibleMoves = new ArrayList<Integer>();
 
@@ -151,6 +129,8 @@ public class GameTurn {
         }
         // TODO: implement cooperation with team member
         // and killing on the way
+        // probably just a special number for the move
+        // which then will be processed as for loop of 1 distance moves
         else if (cardRank.equals(Rank.SEVEN)) {
             possibleMoves.add(1);
             possibleMoves.add(2);
@@ -164,14 +144,12 @@ public class GameTurn {
             // EXCHANGE TWO BALLS
             // A marble positioned for the first time at the start, at home or in the
             // target area, may not be exchanged.
-
-            // TODO: COMPLETE IMPLEMENTATION OF THIS WILL REQUIRE BOARDSTATE
-            // for (Ball ball : balls) {
-            // if (ball.getState() == BallState.BOARD &&
-            // ball.getPosition != 0/16/32/48) {
-            // possibleMoves.add(ball.getPosition());
-            // }
-            // }
+            for (Ball ball : balls) {
+                int ballPos = ball.getPosition();
+                if (!startingPoints.contains(ballPos) && ballPos != -1) {
+                    possibleMoves.add(ball.getPosition());
+                }
+            }
         } 
         else if (cardRank.equals(Rank.KING)) {
             // MOVE BY 13 OR INVOKE A BALL FROM HOME
@@ -197,6 +175,14 @@ public class GameTurn {
         //return possibleMoves;
     }
 
+    public void setInvokeTrue() {
+        this.canInvoke = true;
+    }
+
+    public void setPossibleMoves(List<Integer> possibleMoves) {
+        this.possibleMoves = possibleMoves;
+    }
+
     public Rank chooseJokerRank() {
         // TODO: WILL NEED TO SHOW THE USER POSSIBLE CARDS
         // OR JUST HIGHLIGHT THE MOVES ???
@@ -206,9 +192,8 @@ public class GameTurn {
     }
 
     public void endTurn() {
-        // TODO: do we keep track of played turns, their number?
-        // do we just create new GameTurn every time a player plays his turn?
-        // or do we enable 1 action per turn and then just change the vars of GameTurn?
+        // increment roundsPlayed
+        // WEBSOCKET call to display update to every player 
     }
 
 }
