@@ -78,7 +78,11 @@ public class Game {
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             this.initPlayerState(player);
+
+            // Add game to users list of games
             player.addGame(this);
+
+            // If game is full, automatically start game
             if(this.isFull()){
                 this.startGame();
             }

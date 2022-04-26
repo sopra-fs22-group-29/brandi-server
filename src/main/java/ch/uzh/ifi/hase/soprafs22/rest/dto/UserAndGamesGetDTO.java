@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Game;
 
 /*
  * Used to get user data + data of all the games he's in 
+ * Needed because otherwise, when getting user, we also get the users games, which all include PlayerStates which include Users which include Games and so on
  */
 
 public class UserAndGamesGetDTO {

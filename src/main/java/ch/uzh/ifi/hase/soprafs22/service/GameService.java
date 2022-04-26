@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,10 +55,11 @@ public class GameService {
     //TODO: I guess if we have lobbyLeader then we need one user assigned to lobby in the Lobby class?
     // Also a lobbyLeader is the one creating the lobby but when he leaves it we randomly assign next one?
     // Then in such implementation I guess we use User instead of Long here as we can easily check if lobbyLeader is in lobby through players ArrayList?
-    public Game createGame(Long lobbyLeaderId) {
-        Optional<User> lobbyLeader = this.userRepository.findById(lobbyLeaderId);
-        if(lobbyLeader.isPresent()){
-            Game newGame = new Game(lobbyLeader.get());
+    public Game createGame(Long userId) {
+        Optional<User> optUser = this.userRepository.findById(userId);
+        if(optUser.isPresent()){
+            // Create Game and set passed user as player in that game, return game
+            Game newGame = new Game(optUser.get());
             newGame = gameRepository.saveAndFlush(newGame);
             System.out.println("Created Information for Game: " + newGame.getId() + newGame.getPlayerStates());
             return newGame;
@@ -72,9 +72,9 @@ public class GameService {
     public Game joinGame(Long gameId, String username){
         Optional<Game> optGame = gameRepository.findById(gameId);
         if(optGame.isPresent()){
+            // If game exists, add User to game 
             Game game = optGame.get();
             User user = userRepository.findByUsername(username);
-            // System.out.println(user.getGameIds());
             Boolean added = game.addPlayer(user);
             if(!added) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't add Player"); }
             game = gameRepository.saveAndFlush(game);
