@@ -27,7 +27,7 @@ public class InGameWebsocketController {
         // verify move validity and add Player details
         String username = principal.getName();
         // TODO: same constructor for User as was in Player?
-        // move.setPlayer(new User(username, 2, "randomUUID", "fake password", Color.BLUE));
+        move.setPlayer(new User(username, 2L, "randomUUID", "fake password", Color.BLUE));
 
         // notify subscribers with the move
         return DTOMapper.INSTANCE.convertEntityToExampleMoveGetDTO(move);
