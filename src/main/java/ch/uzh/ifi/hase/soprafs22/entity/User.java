@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -31,6 +32,9 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @GeneratedValue
+    private String uuid;
+
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -43,6 +47,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private UserStatus status;
 
+    @Column(nullable = true, unique = false)
+    private Color color;
+
     @CreatedDate
     @Column(nullable = false)
     private Instant createdDate;
@@ -50,6 +57,14 @@ public class User implements Serializable {
     @ManyToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
+
+    public User(String username, Long id, String uuid, String password, Color color) {
+        this.username = username;
+        this.id = id;
+        this.uuid = uuid;
+        this.password = password;
+        this.color = color;
+    }
 
     public User(String username, String password) {
         this.username = username;

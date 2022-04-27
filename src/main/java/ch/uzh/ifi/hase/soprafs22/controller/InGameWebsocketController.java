@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.ExampleMove;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMovePostDTO;
@@ -26,7 +26,8 @@ public class InGameWebsocketController {
 
         // verify move validity and add Player details
         String username = principal.getName();
-        move.setPlayer(new Player(username, 2, "randomUUID", "fake password", Color.BLUE));
+        // TODO: same constructor for User as was in Player?
+        // move.setPlayer(new User(username, 2, "randomUUID", "fake password", Color.BLUE));
 
         // notify subscribers with the move
         return DTOMapper.INSTANCE.convertEntityToExampleMoveGetDTO(move);

@@ -1,20 +1,20 @@
 package ch.uzh.ifi.hase.soprafs22.entity.websocket;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 public class ExampleMove {
 
-    private Player player;
+    private User player;
     private Card playedCard;
     private Long ballId;
     private int destinationTile;
 
-    public Player getPlayer() {
+    public User getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(User player) {
         this.player = player;
     }
 

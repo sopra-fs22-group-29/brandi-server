@@ -1,18 +1,18 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 public class ExampleMoveGetDTO {
 
-    private Player player;
+    private User player;
     private Long ballId;
     private int destinationTile;
 
-    public Player getPlayer() {
+    public User getPlayer() {
         return player;
     }
 
-    public void setPlayer(Player player) {
+    public void setPlayer(User player) {
         this.player = player;
     }
 
