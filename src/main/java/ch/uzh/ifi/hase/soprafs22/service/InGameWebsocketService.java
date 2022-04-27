@@ -34,20 +34,32 @@ public class InGameWebsocketService {
         this.lobbyRepository = lobbyRepository;
     }
 
-    public Move verifyMove(Move move, String username, Long gameId){
+    public Move verifyMove(Move move, String username){
         // Assign user to move, make move in Game, return move
         User user = userRepository.findByUsername(username);
-        move.setUser(user);
-        Optional<Game> optGame = gameRepository.findById(gameId);
-        Game game;
-        if(optGame.isPresent()){
-            game = optGame.get();
-            game.makeMove(move);
-            gameRepository.saveAndFlush(game);
-        } else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong when executing your move");
-        }
-        
+        Optional<Long> optGameId = user.getCurrentGameId();
+        optGameId.ifPresentOrElse(
+            //If current game was found
+            (gameId) ->{
+                move.setUser(user);
+                Optional<Game> optGame = gameRepository.findById(gameId);
+                Game game;
+                if(optGame.isPresent()){
+                    game = optGame.get();
+                    // Actually make the move and persist it
+                    game.makeMove(move);
+                    gameRepository.saveAndFlush(game);
+                } else{
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong when executing your move");
+                }
+            },
+            //If no current game found
+            () -> {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has no ongoing game");
+            }
+        );
+
+        // If everything went well, return the move that was made
         return move;
     }
 }

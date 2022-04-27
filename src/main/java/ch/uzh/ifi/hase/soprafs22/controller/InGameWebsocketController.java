@@ -28,13 +28,13 @@ public class InGameWebsocketController {
     
     @MessageMapping("/move")
     @SendTo("/client/move")
-    public MoveGetDTO exampleMove(MovePostDTO exampleMovePostDTO, Long gameId, Principal principal) throws Exception {
+    public MoveGetDTO move(MovePostDTO MovePostDTO, Principal principal) throws Exception {
         // get move from the client
-        Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(exampleMovePostDTO);
+        Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
 
         // verify move validity and add Player details
         String username = principal.getName();
-        move = service.verifyMove(move, username, gameId);
+        move = service.verifyMove(move, username);
 
         // notify subscribers with the move
         /* TODO: Should this return the whole gameState instead of only a move? 

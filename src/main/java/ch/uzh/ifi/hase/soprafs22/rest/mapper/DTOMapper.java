@@ -62,10 +62,10 @@ public interface DTOMapper {
     @Mapping(source = "user", target = "user")
     @Mapping(source = "ballId", target = "ballId")
     @Mapping(source = "destinationTile", target = "destinationTile")
-    MoveGetDTO convertEntityToMoveGetDTO(Move exampleMove);
+    MoveGetDTO convertEntityToMoveGetDTO(Move Move);
 
     @Mapping(source = "ballId", target = "ballId")
     @Mapping(source = "destinationTile", target = "destinationTile")
     @Mapping(source = "playedCard", target = "playedCard")
-    Move convertMovePostDTOtoEntity(MovePostDTO exampleMove);
+    Move convertMovePostDTOtoEntity(MovePostDTO Move);
 }
