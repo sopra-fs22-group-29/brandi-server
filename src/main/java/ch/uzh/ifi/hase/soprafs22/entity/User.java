@@ -47,9 +47,6 @@ public class User implements Serializable {
     @Column(nullable = false)
     private UserStatus status;
 
-    @Column(nullable = true, unique = false)
-    private Color color;
-
     @CreatedDate
     @Column(nullable = false)
     private Instant createdDate;
@@ -58,12 +55,11 @@ public class User implements Serializable {
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
 
-    public User(String username, Long id, String uuid, String password, Color color) {
+    public User(String username, Long id, String uuid, String password) {
         this.username = username;
         this.id = id;
         this.uuid = uuid;
         this.password = password;
-        this.color = color;
     }
 
     public User(String username, String password) {

@@ -72,7 +72,8 @@ public class Game {
         }
 
         playerHand.drawCards(cards);
-        this.playerStates.add(new PlayerState(player, 0, true, playerHand));
+        // TODO: do we assign color once the game starts?
+        this.playerStates.add(new PlayerState(player, 0, null, true, playerHand));
     }
 
     public Boolean addPlayer(User player){
