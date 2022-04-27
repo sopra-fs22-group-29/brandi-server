@@ -75,6 +75,14 @@ public class PlayerState {
         this.playerStatus = playerStatus;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public PlayerHand getPlayerHand() {
         return this.playerHand;
     }
