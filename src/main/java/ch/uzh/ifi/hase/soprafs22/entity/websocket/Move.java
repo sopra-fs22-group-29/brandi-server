@@ -1,19 +1,29 @@
-package ch.uzh.ifi.hase.soprafs22.rest.dto.websocket;
+package ch.uzh.ifi.hase.soprafs22.entity.websocket;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 
-public class ExampleMoveGetDTO {
+public class Move {
 
-    private User player;
+    private User user;
+    private Card playedCard;
     private Long ballId;
     private int destinationTile;
 
-    public User getPlayer() {
-        return player;
+    public User getUser() {
+        return user;
     }
 
-    public void setPlayer(User player) {
-        this.player = player;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Card getPlayedCard() {
+        return playedCard;
+    }
+
+    public void setPlayedCard(Card playedCard) {
+        this.playedCard = playedCard;
     }
 
     public Long getBallId() {
