@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.uzh.ifi.hase.soprafs22.constant.BallState;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 
 public class GameTurn {
@@ -15,10 +15,11 @@ public class GameTurn {
     // TODO: MAYBE NEEDS TO BE SEPARATED INTO MORE CLASSES - TOO MUCH CLUTTER
 
     // When making a move player:
-    // 1. Chooses card => possible moves are highlighted
+    // 1. Chooses card
     // 2. Can switch to another card
-    // 3. Chooses ball with which to move
-    // TODO: 4. Clicks on one of the highlighted positions to go there ???
+    // 3. Chooses ball with which to move => possible moves are highlighted
+    // 4. Can switch to another ball
+    // 5. Clicks on one of the highlighted positions to go there
 
     private PlayerState activePlayer;
     private Ball chosenBall;
@@ -30,7 +31,7 @@ public class GameTurn {
     private List<Ball> balls;
     private PlayerHand playerHand;
 
-    public GameTurn(PlayerState activePlayer) {
+    public GameTurn(PlayerState activePlayer, BoardState boardState) {
         this.activePlayer = activePlayer;
         possibleMoves = new ArrayList<Integer>();
 
@@ -41,7 +42,6 @@ public class GameTurn {
     ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,16,32,48);
 
     // Normal cards: TWO, THREE, FIVE, SIX, EIGHT, NINE, TEN, QUEEN
-    // TODO: THIS COULD BE SEPARATE
     HashMap<String, Integer> normalCards = (HashMap<String, Integer>) Map.of("TWO", 2,
             "THREE", 3,
             "FIVE", 5,
@@ -193,7 +193,8 @@ public class GameTurn {
 
     public void endTurn() {
         // increment roundsPlayed
-        // WEBSOCKET call to display update to every player 
+        // WEBSOCKET call to display update to every player
+        // persist changes in repository
     }
 
 }
