@@ -8,8 +8,11 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
 
+
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -49,5 +52,12 @@ public class InGameWebsocketController {
     public String notifyConnected(Principal principal) throws Exception {
         System.out.println(principal.getName() + " is connecting...");
         return principal.getName() + " notifies subscribers that he's connected!";
+    }
+
+    @MessageMapping("/connected/{room}")
+    @SendTo("/client/connected/{room})")
+    public String greet(@DestinationVariable String room, Principal principal) throws Exception{
+        System.out.println(principal.getName() + " joined room " + room);
+        return principal.getName() + " joined room " + room;
     }
 }
