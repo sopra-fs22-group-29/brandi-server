@@ -7,10 +7,11 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.ExampleMovePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -18,7 +19,10 @@ import java.security.Principal;
 @Controller
 public class InGameWebsocketController {
 
-    @MessageMapping("/move")
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @MessageMapping("/game/move")
     @SendTo("/client/move")
     public ExampleMoveGetDTO exampleMove(ExampleMovePostDTO exampleMovePostDTO, Principal principal) throws Exception {
         // get move from the client
@@ -37,17 +41,27 @@ public class InGameWebsocketController {
      * @param principal Authenticated user information
      * @return state of the current game
      */
-    @MessageMapping("/connected")
+    @MessageMapping("/game/connected")
     @SendTo("/client/connected")
     public String notifyConnected(Principal principal) throws Exception {
         System.out.println(principal.getName() + " is connecting...");
         return principal.getName() + " notifies subscribers that he's connected!";
     }
 
-    @MessageMapping("/connected/{room}")
-    @SendTo("/client/connected/{room})")
-    public String greet(@DestinationVariable String room, Principal principal) throws Exception{
-        System.out.println(principal.getName() + " joined room " + room);
-        return principal.getName() + " joined room " + room;
+    @MessageMapping("/game/{uuid}/connect")
+    @SendTo("/client/connected/{uuid})")
+    public String greet(@DestinationVariable String uuid, Principal principal) throws Exception{
+        System.out.println(principal.getName() + " joined room " + uuid);
+        return principal.getName() + " joined room " + uuid;
+    }
+
+    @MessageMapping("/game/{uuid}/test")
+    public void test(
+            @DestinationVariable String uuid,
+            Principal principal
+    ) throws Exception{
+        System.out.println(principal.getName() + " is testing");
+
+        simpMessagingTemplate.convertAndSendToUser(principal.getName(), "/client/test", "the test worked!");
     }
 }
