@@ -20,6 +20,7 @@ public class PlayerState {
     @GeneratedValue
     private Long id;
 
+    //FIXME: Does this mean that User gets deleted when one of his games is deleted?
     @ManyToOne(cascade = CascadeType.ALL)
     private User player;
     

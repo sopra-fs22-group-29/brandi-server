@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Internal User Representation
@@ -46,8 +47,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Instant createdDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "game_id")
+    @ManyToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
 
     public User(String username, String password) {
@@ -69,6 +70,13 @@ public class User implements Serializable {
 
     public List<Game> getGames() {
         return this.games;
+    }
+
+    public Optional<Game> getGameById(Long id){
+        for(Game game : this.games){
+            if(game.getId() == id){return Optional.of(game);}
+        }
+        return Optional.empty();
     }
 
     public Long getId() {

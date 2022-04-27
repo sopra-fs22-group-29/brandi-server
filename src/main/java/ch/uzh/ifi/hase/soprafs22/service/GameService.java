@@ -59,9 +59,14 @@ public class GameService {
         Optional<User> optUser = this.userRepository.findById(userId);
         if(optUser.isPresent()){
             // Create Game and set passed user as player in that game, return game
-            Game newGame = new Game(optUser.get());
+            User user = optUser.get();
+            Game newGame = new Game(user);
             newGame = gameRepository.saveAndFlush(newGame);
-            System.out.println("Created Information for Game: " + newGame.getId() + newGame.getPlayerStates());
+            
+            // Add game to list of games in user, persist in DB
+            user.addGame(newGame);
+            userRepository.saveAndFlush(user);
+            System.out.println("Created Information for Game: " + newGame.getId());
             return newGame;
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobbyleader");
@@ -72,17 +77,23 @@ public class GameService {
     public Game joinGame(Long gameId, String username){
         Optional<Game> optGame = gameRepository.findById(gameId);
         if(optGame.isPresent()){
-            // If game exists, add User to game 
+            // If game exists, add User to game and persist in DB
             Game game = optGame.get();
             User user = userRepository.findByUsername(username);
             Boolean added = game.addPlayer(user);
             if(!added) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't add Player"); }
             game = gameRepository.saveAndFlush(game);
+            System.out.println(String.format("Added %s to game %d", username, game.getId()));
+
+            // Add game to list of games in user, persist in DB
+            user.addGame(game);
+            userRepository.saveAndFlush(user);
             return game;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
         }
     }
+    // public void addPlayerToGame()
 
     public List<Game> getGames() {
         return gameRepository.findAll();

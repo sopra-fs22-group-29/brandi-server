@@ -77,10 +77,16 @@ public class Game {
 
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
+            // Check if user is already in this game, if so dont let user join
+            if(!player.getGameById(this.id).isEmpty()){
+                System.out.println("Player is already in this game");
+                return false;
+            }
+
             this.initPlayerState(player);
 
             // Add game to users list of games
-            player.addGame(this);
+            // player.addGame(this);
 
             // If game is full, automatically start game
             if(this.isFull()){
