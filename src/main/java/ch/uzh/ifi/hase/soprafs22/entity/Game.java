@@ -36,7 +36,7 @@ public class Game {
     private Integer roundsPlayed;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
+    // @JsonIgnore
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
@@ -93,7 +93,7 @@ public class Game {
             Optional<Game> optGame= player.getGameById(this.id);
             if(!optGame.isEmpty()){
                 System.out.println("Player is already in this game, no action required. Returned true");
-                return true;
+                return false;
             }
 
             this.initPlayerState(player);

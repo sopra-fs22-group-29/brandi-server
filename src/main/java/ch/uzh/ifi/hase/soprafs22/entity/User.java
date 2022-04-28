@@ -55,7 +55,7 @@ public class User implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
-    @JsonIgnore
+    // @JsonIgnore
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
 

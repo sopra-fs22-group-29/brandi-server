@@ -39,11 +39,11 @@ public class UserService {
     }
 
     public List<User> getUsers() {
-        return this.userRepository.findAll();
+        return userRepository.findAll();
     }
 
     public User getUser(Long id) {
-        Optional<User> user = this.userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
 
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with id " + id + " does not exist.");

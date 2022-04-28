@@ -34,7 +34,7 @@ public class PlayerState {
     @Column(nullable=false)
     private Boolean playerStatus;
     
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private PlayerHand playerHand;
 
     public PlayerState(){}
@@ -84,11 +84,4 @@ public class PlayerState {
     public UserGetDTO getPlayer() {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
     }
-
-
-
-    /* public void setPlayerHand(PlayerHand playerHand) {
-        this.playerHand = playerHand;
-    } */
-
 }

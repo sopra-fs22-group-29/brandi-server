@@ -87,14 +87,16 @@ public class GameService {
             Game game = optGame.get();
             User user = userRepository.findByUsername(username);
             Boolean added = game.addPlayer(user);
-            if(!added) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't add Player"); }
-            game = gameRepository.saveAndFlush(game);
-            System.out.println(String.format("Added %s to game %d", username, game.getId()));
+            if(added){
+                game = gameRepository.saveAndFlush(game);
+                System.out.println(String.format("Added %s to game %d", username, game.getId()));
 
-            // Add game to list of games in user, persist in DB
-            user.addGame(game);
-            userRepository.saveAndFlush(user);
-            return true;
+                // Add game to list of games in user, persist in DB
+                user.addGame(game);
+                userRepository.saveAndFlush(user);
+                return true;
+            }
+            return false;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
         }

@@ -15,7 +15,7 @@ public class BoardState {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
+    // @JsonIgnore
     private List<Ball> balls;
 
     public BoardState() {}
