@@ -8,12 +8,9 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +52,6 @@ public class User implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
-    // @JsonIgnore
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
 

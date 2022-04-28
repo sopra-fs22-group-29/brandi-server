@@ -56,8 +56,9 @@ public class InGameWebsocketService {
         });
     }
 
+   /* Assign user to move, make move in Game, return move */
     public Move verifyMove(Game game, Move move, String username){
-        // Assign user to move, make move in Game, return move
+        // Add user details to move so that everybody knows who made the move
         User user = userRepository.findByUsername(username);
         move.setUser(user);
         // Actually make the move and persist it

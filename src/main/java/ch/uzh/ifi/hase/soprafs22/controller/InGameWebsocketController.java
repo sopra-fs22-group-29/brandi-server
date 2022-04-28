@@ -16,16 +16,9 @@ import org.springframework.stereotype.Controller;
 import java.security.Principal;
 import java.util.List;
 
-/* import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery; */
 
 @Controller
 public class InGameWebsocketController {
-
-    /* static EntityManagerFactory emf = Persistence.createEntityManagerFactory(""); */
 
     private final InGameWebsocketService inGameWebsocketService;
     private final GameService gameService;
@@ -36,30 +29,14 @@ public class InGameWebsocketController {
     }
 
 
-    // TODO: need to add {uuid} and notify all other players (refer to test function below)
     @MessageMapping("/websocket/{uuid}/move")
     public void move(@DestinationVariable String uuid, MovePostDTO MovePostDTO, Principal principal) throws Exception {
-        // get move from the client
+        // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
-
-        // verify move validity and add Player details
         String username = principal.getName();
-
-        /* EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        TypedQuery<Game> g = em.createQuery("SELECT g FROM Game g LEFT JOIN FETCH g.playerStates", Game.class);
-        List<Game> games = g.getResultList();
-        Game userGame = null;
-        for(Game game : games){
-            if(game.getUuid().equals(uuid)){
-                userGame = game;
-                break;
-            }
-        } */
-
-
         Game userGame = gameService.getGameByUuid(uuid);
 
+        // verify move validity and add Player details to move for returning
         move = inGameWebsocketService.verifyMove(userGame, move, username);
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         

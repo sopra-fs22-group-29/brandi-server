@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -124,5 +126,23 @@ public class UserService {
         }
 
         return userFromDatabase;
+    }
+
+    public List<String> getGameUuidsOfUser(Long id) {
+        Optional<User> optUser = userRepository.findById(id);
+        List<String> gameUuids = new ArrayList<>();
+
+        // If user exists: Add uuids to list, else throw error
+        optUser.ifPresentOrElse(
+            (user) -> {
+                List<Game> games = user.getGames();
+                games.forEach((game) -> gameUuids.add(game.getUuid()));
+            }, 
+            () -> {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User was not found");
+            }
+        );
+        
+        return gameUuids;
     }
 }

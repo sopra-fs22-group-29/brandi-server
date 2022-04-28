@@ -1,7 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
@@ -97,4 +96,11 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
+    @GetMapping("/users/{id}/games")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<String> getGameUuidsOfUser(@PathVariable Long id){
+        List<String> gameUuids = userService.getGameUuidsOfUser(id);
+        return gameUuids;
+    }
 }

@@ -36,7 +36,6 @@ public class Game {
     private Integer roundsPlayed;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    // @JsonIgnore
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
@@ -59,7 +58,6 @@ public class Game {
         this.addPlayer(player);
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
-        // this.startNewRound();
     }
 
     /* Create balls for each player, store in boardstate */
@@ -87,6 +85,10 @@ public class Game {
         this.playerStates.add(new PlayerState(player, 0, true, playerHand));
     }
 
+    /*  
+     * If player is not in game yet: Add player, return true
+     * If player was already in game: Do nothing, return false
+     */
     public Boolean addPlayer(User player){
         if(!this.isFull() && !this.gameOn){
             // Check if user is already in this game, if so dont let user join
@@ -97,9 +99,6 @@ public class Game {
             }
 
             this.initPlayerState(player);
-
-            // Add game to users list of games
-            // player.addGame(this);
 
             // If game is full, automatically start game
             if(this.isFull()){

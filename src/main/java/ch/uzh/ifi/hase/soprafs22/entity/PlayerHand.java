@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class PlayerHand {
@@ -16,7 +14,6 @@ public class PlayerHand {
     private Long id;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // @Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "Card_id")
     private List<Card> activeCards = new ArrayList<>();
 
