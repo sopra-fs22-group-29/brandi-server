@@ -63,7 +63,7 @@ public class InGameWebsocketController {
         move = inGameWebsocketService.verifyMove(userGame, move, username);
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         
-        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO.toString()); 
+        inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
     }
 
     /**

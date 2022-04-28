@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
@@ -35,10 +36,11 @@ public class Game {
     private Integer roundsPlayed;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "BoardState_id")
     private BoardState boardstate;
     
