@@ -38,11 +38,11 @@ public class Game {
 	@JoinColumn(name = "PlayerState_id")
     private List<PlayerState> playerStates;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "BoardState_id")
     private BoardState boardstate;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
@@ -90,7 +90,7 @@ public class Game {
             // Check if user is already in this game, if so dont let user join
             Optional<Game> optGame= player.getGameById(this.id);
             if(!optGame.isEmpty()){
-                System.out.println("Player is already in this game");
+                System.out.println("Player is already in this game, no action required. Returned true");
                 return true;
             }
 

@@ -56,31 +56,14 @@ public class InGameWebsocketService {
         });
     }
 
-    public Move verifyMove(Move move, String username){
+    public Move verifyMove(Game game, Move move, String username){
         // Assign user to move, make move in Game, return move
         User user = userRepository.findByUsername(username);
-        Optional<Long> optGameId = user.getCurrentGameId();
-        optGameId.ifPresentOrElse(
-            //If current game was found
-            (gameId) ->{
-                move.setUser(user);
-                Optional<Game> optGame = gameRepository.findById(gameId);
-                Game game;
-                if(optGame.isPresent()){
-                    game = optGame.get();
-                    // Actually make the move and persist it
-                    game.makeMove(move);
-                    gameRepository.saveAndFlush(game);
-                } else{
-                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Something went wrong when executing your move");
-                }
-            },
-            //If no current game found
-            () -> {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User has no ongoing game");
-            }
-        );
-
+        move.setUser(user);
+        // Actually make the move and persist it
+        game.makeMove(move);
+        gameRepository.saveAndFlush(game);
+    
         // If everything went well, return the move that was made
         return move;
     }

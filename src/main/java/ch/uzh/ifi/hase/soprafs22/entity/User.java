@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -47,7 +50,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Instant createdDate;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "game_id", referencedColumnName = "id")
     private List<Game> games;
 
