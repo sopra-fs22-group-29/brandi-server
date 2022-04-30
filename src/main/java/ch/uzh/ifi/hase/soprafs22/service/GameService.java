@@ -52,10 +52,7 @@ public class GameService {
         }
     }
 
-    //TODO: I guess if we have lobbyLeader then we need one user assigned to lobby in the Lobby class?
-    // Also a lobbyLeader is the one creating the lobby but when he leaves it we randomly assign next one?
-    // Then in such implementation I guess we use User instead of Long here as we can easily check if lobbyLeader is in lobby through players ArrayList?
-    public Game createGame(Long userId) {
+    public String createGame(Long userId) {
         Optional<User> optUser = this.userRepository.findById(userId);
         if(optUser.isPresent()){
             // Create Game and set passed user as player in that game, return game
@@ -66,34 +63,55 @@ public class GameService {
             // Add game to list of games in user, persist in DB
             user.addGame(newGame);
             userRepository.saveAndFlush(user);
-            System.out.println("Created Information for Game: " + newGame.getId());
-            return newGame;
+            System.out.println("Created Information for Game: " + newGame.getUuid());
+            return newGame.getUuid();
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Lobbyleader");
         }
         
     }
 
-    public Game joinGame(Long gameId, String username){
-        Optional<Game> optGame = gameRepository.findById(gameId);
+    public Boolean joinGame(String uuid, String username){
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isPresent()){
             // If game exists, add User to game and persist in DB
             Game game = optGame.get();
             User user = userRepository.findByUsername(username);
-            Boolean added = game.addPlayer(user);
-            if(!added) { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't add Player"); }
-            game = gameRepository.saveAndFlush(game);
-            System.out.println(String.format("Added %s to game %d", username, game.getId()));
 
-            // Add game to list of games in user, persist in DB
-            user.addGame(game);
-            userRepository.saveAndFlush(user);
-            return game;
+            /* Boolean added = 
+             *  true if user wasn't in game before and was added
+             *  false if user was already in game and no action was taken 
+             */
+            Boolean added = game.addPlayer(user);
+
+            if(added){
+                game = gameRepository.saveAndFlush(game);
+                System.out.println(String.format("Added user %s to game %d, uuid = &s", username, game.getId(), game.getUuid()));
+
+                // Add game to list of games in user, persist in DB
+                user.addGame(game);
+                userRepository.saveAndFlush(user);
+                return true;
+            }
+            return false;
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
         }
     }
-    // public void addPlayerToGame()
+    
+
+     /* Throws error if user in not in game to be retrieved */
+    public Game getGameByUuid(String uuid, String username) {
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isPresent()){
+            Game game = optGame.get();
+            User user = userRepository.findByUsername(username);
+            if(user.getGameById(game.getId()).isPresent()){
+                return game;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
+    }
 
     public List<Game> getGames() {
         return gameRepository.findAll();
