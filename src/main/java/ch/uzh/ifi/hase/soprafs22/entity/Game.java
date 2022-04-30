@@ -80,8 +80,9 @@ public class Game {
         }
 
         playerHand.drawCards(cards);
-        // TODO: do we assign color once the game starts?
-        this.playerStates.add(new PlayerState(player, 0, null, true, playerHand));
+        // TODO: do we assign color once the game starts? Replace default color yellow
+        // Pls dont just create playerstate with color null, crashes the whole process of creating a game
+        this.playerStates.add(new PlayerState(player, 0, Color.YELLOW, true, playerHand));
     }
 
     /*  

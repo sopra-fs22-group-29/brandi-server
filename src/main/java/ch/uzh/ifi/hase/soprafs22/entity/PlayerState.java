@@ -50,6 +50,7 @@ public class PlayerState {
         this.team = team;
         this.playerStatus = playerStatus;
         this.playerHand = playerHand;
+        this.color = color;
     }
 
     public Boolean getIsPlaying() {
