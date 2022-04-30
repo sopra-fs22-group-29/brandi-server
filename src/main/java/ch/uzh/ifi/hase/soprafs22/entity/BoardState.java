@@ -19,14 +19,14 @@ public class BoardState {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ball> balls;
 
-    public static ArrayList<Integer> startingPoints = (ArrayList<Integer>) List.of(0,16,32,48);
+    public static List<Integer> startingPoints = List.of(0,16,32,48);
 
-    public static ArrayList<Integer> homePoints = (ArrayList<Integer>) List.of(80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95);
+    public static List<Integer> homePoints = List.of(80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95);
 
-    public static ArrayList<Integer> basePoints = (ArrayList<Integer>) List.of(64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79);
+    public static List<Integer> basePoints = List.of(64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79);
 
     // Normal cards: TWO, THREE, FIVE, SIX, EIGHT, NINE, TEN, QUEEN
-    public static HashMap<Rank, Integer> normalCards = (HashMap<Rank, Integer>) Map.of(Rank.TWO, 2,
+    public static Map<Rank, Integer> normalCards = Map.of(Rank.TWO, 2,
             Rank.THREE, 3,
             Rank.FIVE, 5,
             Rank.SIX, 6,
