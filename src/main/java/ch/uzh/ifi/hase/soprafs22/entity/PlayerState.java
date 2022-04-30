@@ -37,6 +37,7 @@ public class PlayerState {
     @Column(nullable = false)
     private Color color;
     
+    //TODO: Is this the same as isPlaying?
     @Column(nullable=false)
     private Boolean playerStatus;
     
@@ -99,5 +100,9 @@ public class PlayerState {
     // Returns PlayerGetDTO 
     public UserGetDTO getPlayer() {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
+    }
+
+    public Optional<Long> getCurrentGameId(){
+        return this.player.getCurrentGameId();
     }
 }

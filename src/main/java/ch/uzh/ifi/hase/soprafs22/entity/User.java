@@ -75,8 +75,18 @@ public class User implements Serializable {
     public User() {
     }
 
-    public void addGame(Game game){
-        this.games.add(game);
+    /* Logic seems flawed, need to rework */
+    public Boolean addGame(Game addGame){
+        if(!addGame.isGameOn()){
+            this.games.add(addGame);
+            return true;
+        } else {
+            for(Game game: this.games){
+                if(game.isGameOn()) return false;
+            }
+            return true;
+        }
+        
     }
 
     public void removeGame(Game game){
@@ -97,7 +107,6 @@ public class User implements Serializable {
 
     /*
      * Returns game in list of games that is currently active, if more than one is active(shouldnt be possible), just returns first one
-     * TODO: Make sure User is only in one active game at a time
     */
     public Optional<Long> getCurrentGameId(){
         for(Game game : this.games){

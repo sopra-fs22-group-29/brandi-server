@@ -109,6 +109,18 @@ public class Game {
                 return false;
             }
 
+            // Check that user is in no other active game
+            // If currentGameId is not present then user is in no game -> proceed normally
+            Optional<Long> optGameId = player.getCurrentGameId();
+            if (optGameId.isPresent()) {
+                if(!optGameId.get().equals(this.id)){
+                    throw new Error("User is already in a different game");
+                } else{
+                    // User is already in this game
+                    return true;
+                }
+            }
+            
             this.initPlayerState(player);
 
             // If game is full, automatically start game
@@ -118,7 +130,7 @@ public class Game {
             return true;
         } else{
             // TODO: Should this throw error?
-            System.out.println("Can't add new player with id " + player.getId());
+            System.out.println("Game has started / is full, Can't add new player with id " + player.getId());
             return false;
         }
     }
@@ -128,6 +140,8 @@ public class Game {
     }
 
     public void startGame(){
+        //FIXME: Has to check if all Users are in no other active game, should also be checked when adding a player
+
         this.gameOn = true;
     }
 
@@ -154,9 +168,29 @@ public class Game {
         Boolean moveExecuted = false;
         return moveExecuted;        
     }
-    public Boolean checkPlayersOnline(){
-        // TODO: Implement checkPlayersOnline
-        return false;
+
+    // Check if all players in game are active in this game, only works if game is started already
+    public Boolean checkAllPlayersInGame(){
+        for(PlayerState playerState: this.playerStates){
+            Optional<Long> optGameId = playerState.getCurrentGameId();
+            if(optGameId.isPresent()){
+                Long gameId = optGameId.get();
+                if(gameId.equals(this.id)){
+                    continue;
+                } else {
+                    System.out.println("User is active in a different game");
+                    return false;
+                }
+            } else{
+                System.out.println("Couldnt find an active game for user");
+            }
+        }
+        return true;
+
+        /* for(PlayerState playerState: this.playerStates){
+            if(!playerState.getIsPlaying()){return false;}
+        }
+        return true; */
     }
 
     public void pauseGame(){
