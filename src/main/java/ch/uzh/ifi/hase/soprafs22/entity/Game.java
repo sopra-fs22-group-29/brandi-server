@@ -153,7 +153,7 @@ public class Game {
         for(PlayerState playerState: this.playerStates){
             Optional<Long> optGame = playerState.getCurrentGameId();
             optGame.ifPresent((game) -> {
-                throw new Error("message");
+                throw new Error("A user is already in an active game, can't start this game");
             });
         }
         this.gameOn = true;
