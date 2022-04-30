@@ -164,7 +164,6 @@ public class Game {
     }
 
     public Boolean makeMove(Move move){
-        //TODO: Check validity and execute move
         Boolean moveExecuted = false;
         return moveExecuted;        
     }
@@ -187,6 +186,7 @@ public class Game {
         }
         return true;
 
+        // Previous approach, only checks if all players are in a game, not if all are in this game
         /* for(PlayerState playerState: this.playerStates){
             if(!playerState.getIsPlaying()){return false;}
         }
