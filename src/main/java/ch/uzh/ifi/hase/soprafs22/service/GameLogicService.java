@@ -12,14 +12,31 @@ import java.util.Set;
 
 public class GameLogicService {
 
+    public List<Integer> highlightBalls (Rank cardRank, List<Ball> balls, Color playerColor) {
+        List<Integer> highlightedBalls = new ArrayList<Integer>();
+
+        for (Ball ball : balls) {
+            int ballPos = ball.getPosition();
+            if (ball.getColor().equals(playerColor)) {
+                if (!ball.getPosition().equals(-1)) {
+                    highlightedBalls.add(ballPos);
+                }
+                else {
+                    if (cardRank.equals(Rank.ACE) || (cardRank.equals(Rank.KING))) {
+                        highlightedBalls.add(ballPos);
+                    }
+                }
+            }
+        }
+
+        return highlightedBalls;
+    }
+
     public List<Integer> getPossibleMoves(Rank cardRank, List<Ball> balls, Ball ball) {
         List<Integer> possibleMoves = new ArrayList<Integer>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
-            // TODO: Maybe implement possibleDestinations
-            //int moveLen = normalCards.get(cardRank);
             possibleMoves.add(BoardState.normalCards.get(cardRank));
-            //possibleDestinations.add();
         }
         else if (cardRank.equals(Rank.FOUR)) {
             possibleMoves.add(4);
@@ -30,6 +47,9 @@ public class GameLogicService {
         // probably just a special number for the move
         // which then will be processed as for loop of 1 distance moves
         else if (cardRank.equals(Rank.SEVEN)) {
+            // special move num
+            possibleMoves.add(107);
+
             possibleMoves.add(1);
             possibleMoves.add(2);
             possibleMoves.add(3);
@@ -44,7 +64,7 @@ public class GameLogicService {
             // target area, may not be exchanged.
             for (Ball b : balls) {
                 int ballPos = ball.getPosition();
-                if (!BoardState.startingPoints.contains(ballPos) && ballPos >= 0 && ballPos <= 79 ) {
+                if (!BoardState.startingPoints.contains(ballPos) && ballPos >= 0 && ballPos <= 63 ) {
                     possibleMoves.add(ball.getPosition());
                 }
             }
@@ -64,9 +84,6 @@ public class GameLogicService {
             possibleMoves.add(100);
             //setInvokeTrue();
         }
-        // else if (cardRank.equals(Rank.JOKER)) {
-        //     // TODO: CAN BE ANY OF ABOVE CARDS
-        // }
 
         // Remove duplicates from possible moves
         Set<Integer> set = new LinkedHashSet<>();
@@ -74,24 +91,29 @@ public class GameLogicService {
         possibleMoves.clear();
         possibleMoves.addAll(set);
 
-        //setPossibleMoves(possibleMoves);
         return possibleMoves;
     }
 
-    public List<Integer> getPossibleDestinations (List<Integer> possibleMoves, Color playerColor, List<Ball> playerBalls) {
+    public List<Integer> getPossibleDestinations (List<Integer> possibleMoves, Ball ball) {
 
         List<Integer> possibleDestinations = new ArrayList<Integer>();
 
-        // TODO: PLAYERSTATE COULD MAYBE HAVE ITS BALLS?
-        for (Ball b: playerBalls) {
-            if (b.getColor().equals(playerColor)) {
-                for (int possibleMove : possibleMoves) {
-                    // modulo div as board's last pos is 63
-                    possibleDestinations.add((b.getPosition() + possibleMove) % 63);
-                }
-            }
+        for (int possibleMove : possibleMoves) {
+            // modulo div as board's last pos is 63
+            possibleDestinations.add((ball.getPosition() + possibleMove) % 63);
         }
 
+        // TODO: PLAYERSTATE COULD MAYBE HAVE ITS BALLS?
+//        for (Ball b: playerBalls) {
+//            if (b.getColor().equals(playerColor)) {
+//                for (int possibleMove : possibleMoves) {
+//                    // modulo div as board's last pos is 63
+//                    possibleDestinations.add((b.getPosition() + possibleMove) % 63);
+//                }
+//            }
+//        }
+
+        // Remove duplicates from possible destinations
         Set<Integer> set = new LinkedHashSet<>();
         set.addAll(possibleDestinations);
         possibleDestinations.clear();
@@ -105,7 +127,6 @@ public class GameLogicService {
         int startPos = ball.getPosition();
 
         // for every possible move, we check if any ball on the way is on the starting point
-        // MORE EFFICIENT VERSION THAN THE ONE BELOW
         for (Ball b : balls) {
             if (BoardState.startingPoints.contains(b.getPosition())) {
                 for (int possibleMove : possibleMoves) {
