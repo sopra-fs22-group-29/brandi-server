@@ -1,10 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
-import ch.uzh.ifi.hase.soprafs22.constant.BallState;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
-import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 
 import java.util.ArrayList;
@@ -46,8 +44,7 @@ public class GameLogicService {
             // target area, may not be exchanged.
             for (Ball b : balls) {
                 int ballPos = ball.getPosition();
-                BallState ballState = ball.getState();
-                if (!BoardState.startingPoints.contains(ballPos) && ballState == BallState.BOARD) {
+                if (!BoardState.startingPoints.contains(ballPos) && ballPos >= 0 && ballPos <= 79 ) {
                     possibleMoves.add(ball.getPosition());
                 }
             }
