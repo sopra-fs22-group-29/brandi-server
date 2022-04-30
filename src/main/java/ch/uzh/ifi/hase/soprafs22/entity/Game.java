@@ -149,8 +149,13 @@ public class Game {
     }
 
     public void startGame(){
-        //FIXME: Has to check if all Users are in no other active game, should also be checked when adding a player
-
+        //Check if all Users are in no other active game, should also be checked when adding a player
+        for(PlayerState playerState: this.playerStates){
+            Optional<Long> optGame = playerState.getCurrentGameId();
+            optGame.ifPresent((game) -> {
+                throw new Error("message");
+            });
+        }
         this.gameOn = true;
     }
 
@@ -213,7 +218,6 @@ public class Game {
     public void endGame(){
         this.gameOver = true;
     }
-
 
     public Long getId() {
         return this.id;

@@ -49,7 +49,6 @@ public class PlayerState {
     public PlayerState(){}
 
     public PlayerState(User player, Integer team, Color color, Boolean playerStatus, PlayerHand playerHand) {
-        //FIXME: player probably doesnt need to be the whole user because this includes pwd and token
         this.player = player;
         this.isPlaying = true;
         this.team = team;
