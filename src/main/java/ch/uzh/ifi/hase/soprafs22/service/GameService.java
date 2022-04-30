@@ -100,10 +100,15 @@ public class GameService {
     }
     
 
-    public Game getGameByUuid(String uuid) {
+     /* Throws error if user in not in game to be retrieved */
+    public Game getGameByUuid(String uuid, String username) {
         Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isPresent()){
-            return optGame.get();
+            Game game = optGame.get();
+            User user = userRepository.findByUsername(username);
+            if(user.getGameById(game.getId()).isPresent()){
+                return game;
+            }
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find game");
     }

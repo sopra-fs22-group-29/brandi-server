@@ -34,7 +34,7 @@ public class InGameWebsocketController {
         // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
         String username = principal.getName();
-        Game userGame = gameService.getGameByUuid(uuid);
+        Game userGame = gameService.getGameByUuid(uuid, username);
 
         // verify move validity and add Player details to move for returning
         move = inGameWebsocketService.verifyMove(userGame, move, username);
@@ -54,7 +54,7 @@ public class InGameWebsocketController {
 
         // we still have to verify if the player is actually playing in the game with that uuid
 
-        Game game = gameService.getGameByUuid(uuid);
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
 
         // the payload can be a anything you want to send to the clients
         inGameWebsocketService.notifyAllGameMembers("/client/test", game, principal.getName() + " sent a test message!");
