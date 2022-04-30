@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
@@ -102,6 +104,7 @@ public class PlayerState {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
     }
 
+    @JsonIgnore
     public Optional<Long> getCurrentGameId(){
         return this.player.getCurrentGameId();
     }

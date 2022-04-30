@@ -86,7 +86,7 @@ public class Game {
         this.boardstate = new BoardState(balls);
     }
 
-    /* Create PlayerState for every player with 6 cards in playerHand */
+    /* Create PlayerState for every player with 6 cards in playerHand, assign team and color randomly */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
         HashSet<Card> cards = new HashSet<>();
@@ -102,9 +102,6 @@ public class Game {
         // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
         Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
 
-        // TODO: do we assign color once the game starts? Replace default color yellow
-            // Pls dont just create playerstate with color null, crashes the whole process of creating a game
-        // TODO: Assign colors to users so that each player has a different colors
         this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
