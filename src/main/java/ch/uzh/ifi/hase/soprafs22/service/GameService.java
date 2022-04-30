@@ -5,7 +5,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs22.repository.LobbyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +31,13 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
-    private final LobbyRepository lobbyRepository;
 
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository,
-    @Qualifier("userRepository") UserRepository userRepository,
-    @Qualifier("lobbyRepository") LobbyRepository lobbyRepository) {
+    @Qualifier("userRepository") UserRepository userRepository) {
 
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
-        this.lobbyRepository = lobbyRepository;
     }
 
     public Game getGame(Long Id) {
