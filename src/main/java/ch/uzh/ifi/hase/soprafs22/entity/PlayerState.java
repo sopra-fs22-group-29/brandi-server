@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class PlayerState {

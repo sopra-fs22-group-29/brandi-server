@@ -35,21 +35,6 @@ public class InGameWebsocketService {
         this.userRepository = userRepository;
     }
 
-    /* Assign user to move, make move in Game, return move */
-    public Move verifyMove(Game game, Move move, String username){
-        // Add user details to move so that everybody knows who made the move
-        User user = userRepository.findByUsername(username);
-        move.setUser(user);
-        // Actually make the move and persist it
-        game.makeMove(move);
-        gameRepository.saveAndFlush(game);
-    
-        // If everything went well, return the move that was made
-        return move;
-    }
-
-
-
     public void notifyAllGameMembers(String route, Game game, /*Principal principal,*/ Object payload) {
         List<String> sentTo = new ArrayList<>();
         game.getPlayerStates().forEach((playerState) -> {
@@ -88,7 +73,6 @@ public class InGameWebsocketService {
     public void notifySpecificUser(String route, String userName, Object payload) {
         simpMessagingTemplate.convertAndSendToUser(userName, route, payload);
     }
-
 
 
    /* Assign user to move, make move in Game, return move */

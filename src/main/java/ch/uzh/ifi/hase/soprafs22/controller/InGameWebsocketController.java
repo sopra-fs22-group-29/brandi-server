@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
@@ -64,15 +65,17 @@ public class InGameWebsocketController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
 
+        PlayerState playerState = game.getPlayerState(principal.getName());
+
         // provide the new user with the current Game State
         inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
 
         // provide the new user with the his hand
-        inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), game.getPlayerState(principal.getName()).getPlayerHand());
+        inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), playerState.getPlayerHand());
 
         // provide the user's information to all other members in the lobby
         UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), user);
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
     }
 
 
