@@ -62,4 +62,12 @@ public class GameController {
         
         return allGamesDTO;
     }
+
+    @GetMapping("/game/{uuid}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public GameGetDTO getGameByUuid(@PathVariable(name = "uuid") String uuid) {
+        Game game = gameService.getGameByUuid(uuid);
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
 }
