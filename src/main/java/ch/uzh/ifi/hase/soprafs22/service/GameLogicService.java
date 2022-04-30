@@ -100,7 +100,7 @@ public class GameLogicService {
 
         for (int possibleMove : possibleMoves) {
             // modulo div as board's last pos is 63
-            possibleDestinations.add((ball.getPosition() + possibleMove) % 63);
+            possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
         }
 
         // TODO: PLAYERSTATE COULD MAYBE HAVE ITS BALLS?
@@ -127,14 +127,19 @@ public class GameLogicService {
         int startPos = ball.getPosition();
 
         // for every possible move, we check if any ball on the way is on the starting point
+        List <Integer> toBeRemoved = new ArrayList<Integer>();
         for (Ball b : balls) {
             if (BoardState.startingPoints.contains(b.getPosition())) {
                 for (int possibleMove : possibleMoves) {
                     for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
-                        possibleMoves.remove(possibleMove);
+                        toBeRemoved.add(possibleMove);
                     }
                 }
             }
+        }
+
+        for (int i : toBeRemoved) {
+            possibleMoves.remove(Integer.valueOf(i));
         }
 
         return possibleMoves;
