@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -91,7 +92,7 @@ public class PlayerState {
         return this.playerHand;
     }
 
-    public void drawCards(ArrayList<Card> cards){
+    public void drawCards(HashSet<Card> cards){
         this.playerHand.drawCards(cards);
     }
 

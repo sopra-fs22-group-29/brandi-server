@@ -84,7 +84,7 @@ public class Game {
     /* Create PlayerState for every player with 6 cards in playerHand */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
-        ArrayList<Card> cards = new ArrayList<>();
+        HashSet<Card> cards = new HashSet<>();
 
         for(int i = 0; i < 6; i++){
             cards.add(this.deck.drawCard());
@@ -139,7 +139,7 @@ public class Game {
 
         // Draw new cards for each player
         for(PlayerState playerState : this.playerStates){
-            ArrayList<Card> cards = new ArrayList<>();
+            HashSet<Card> cards = new HashSet<>();
 
             for(int i = 0; i < amounts.get(numCardsToPlay); i++){
                 cards.add(this.deck.drawCard());
@@ -242,6 +242,16 @@ public class Game {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public PlayerState getPlayerState(String playerName) {
+        PlayerState state = null;
+        for (PlayerState player : this.playerStates){
+            if(player.getPlayer().getUsername().equals(playerName)) {
+                return player;
+            }
+        }
+        return null;
     }
 
 }

@@ -68,6 +68,9 @@ public class InGameWebsocketController {
         // provide the new user with the current Game State
         inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
 
+        // provide the new user with the his hand
+        inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), game.getPlayerState(principal.getName()).getPlayerHand());
+
         // provide the user's information to all other members in the lobby
         UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
         inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), user);

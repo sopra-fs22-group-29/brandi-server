@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
@@ -122,5 +123,5 @@ public class GameService {
     public List<Game> getGames() {
         return gameRepository.findAll();
     }
-    
+
 }
