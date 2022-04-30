@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
@@ -301,4 +304,14 @@ public class Game {
         return null;
     }
 
+
+    @JsonIgnore
+    public Optional<Color> getUserColorById(Long id){
+        for(PlayerState playerState: this.playerStates){
+            if(playerState.getPlayer().getId() == id){
+                return Optional.of(playerState.getColor());
+            }
+        }
+        return Optional.empty();
+    }
 }

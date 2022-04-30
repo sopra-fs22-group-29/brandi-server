@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
@@ -120,4 +121,16 @@ public class GameService {
         return gameRepository.findAll();
     }
 
+    public Color getColorOfUserInGame(String uuid, Long id) {
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isPresent()){
+            Game game = optGame.get();
+            Optional<Color> optColor = game.getUserColorById(id);
+            if(optColor.isPresent()){
+                return optColor.get();
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not in that game");
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
+    }
 }
