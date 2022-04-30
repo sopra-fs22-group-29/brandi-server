@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class PlayerState {
@@ -85,6 +86,7 @@ public class PlayerState {
         this.color = color;
     }
 
+    @JsonIgnore
     public PlayerHand getPlayerHand() {
         return this.playerHand;
     }
