@@ -48,6 +48,10 @@ public class Game {
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
+    @ElementCollection(targetClass = Color.class)
+    @Column
+    private List<Color> unusedColors;
+
     public Game() {}
 
     public Game(User player) {    
@@ -55,6 +59,7 @@ public class Game {
         this.gameOn = false;
         this.roundsPlayed = 0;
         this.deck = new Deck();
+        this.unusedColors = new ArrayList<Color>(Arrays.asList(Color.values()));
         this.playerStates = new ArrayList<PlayerState>();
         this.addPlayer(player);
         this.initBoardState();
@@ -91,9 +96,16 @@ public class Game {
         }
 
         playerHand.drawCards(cards);
+
+        // Team assigned to user by order of joining, users join teams alternatingly
+        Integer team = this.playerStates.size() % 2;
+        // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
+        Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
+
         // TODO: do we assign color once the game starts? Replace default color yellow
-        // Pls dont just create playerstate with color null, crashes the whole process of creating a game
-        this.playerStates.add(new PlayerState(player, 0, Color.YELLOW, true, playerHand));
+            // Pls dont just create playerstate with color null, crashes the whole process of creating a game
+        // TODO: Assign colors to users so that each player has a different colors
+        this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
     /*  
