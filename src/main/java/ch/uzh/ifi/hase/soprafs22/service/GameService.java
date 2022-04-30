@@ -112,7 +112,7 @@ public class GameService {
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User " + username + " not found");
         }
-        if(!user.getGames().contains(game)){ // check whether user is in the game
+        if(user.getCurrentGameId().equals(game.getId())){ // check whether user is in the game
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not in this game");
         }
 

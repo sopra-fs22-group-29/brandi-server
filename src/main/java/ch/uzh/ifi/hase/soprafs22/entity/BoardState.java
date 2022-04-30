@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -18,9 +19,9 @@ public class BoardState {
     @GeneratedValue
     private Long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<Ball> balls;
+    private Set<Ball> balls;
 
     public static List<Integer> startingPoints = List.of(0,16,32,48);
 
@@ -42,12 +43,12 @@ public class BoardState {
 
     public BoardState() {}
 
-    public BoardState(ArrayList<Ball> balls) {
+    public BoardState(Set<Ball> balls) {
         this.balls = balls;
     }
 
 
-    public List<Ball> getBalls() {
+    public Set<Ball> getBalls() {
         return this.balls;
     }
 

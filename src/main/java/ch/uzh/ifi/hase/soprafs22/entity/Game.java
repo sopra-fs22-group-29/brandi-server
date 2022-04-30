@@ -2,10 +2,12 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.*;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
@@ -61,7 +63,7 @@ public class Game {
 
     /* Create balls for each player, store in boardstate */
     private void initBoardState(){
-        ArrayList<Ball> balls = new ArrayList<>();
+        Set<Ball> balls = new HashSet<Ball> ();
 
         // Information for initializing the balls with correct positions
         Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();

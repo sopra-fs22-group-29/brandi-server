@@ -97,7 +97,7 @@ public class InGameWebsocketService {
         });
 
         sentTo.forEach((send) -> {
-            if(!Objects.equals(send, userName)) {
+            if(!send.equals(userName)) {
                 simpMessagingTemplate.convertAndSendToUser(send, route, payload);
             }
         });

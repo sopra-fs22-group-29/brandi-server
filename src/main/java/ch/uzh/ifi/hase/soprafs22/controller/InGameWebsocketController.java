@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -63,9 +64,6 @@ public class InGameWebsocketController {
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
-
-        // make sure to load the balls
-        List<Ball> balls = game.getBoardstate().getBalls();
 
         // provide the new user with the current Game State
         inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
