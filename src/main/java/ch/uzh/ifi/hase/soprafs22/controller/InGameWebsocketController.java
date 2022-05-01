@@ -1,7 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
@@ -20,15 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 
@@ -94,7 +88,7 @@ public class InGameWebsocketController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
 
-        PlayerState playerState = game.getPlayerState(principal.getName());
+        PlayerState playerState = gameService.playerJoined(game, principal.getName());
 
         // if(playerState == null) return;
 
@@ -104,9 +98,25 @@ public class InGameWebsocketController {
         // provide the new user with the his hand
         inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), playerState.getPlayerHand());
 
-        // provide the user's information to all other members in the lobby
+        // provide the user's updated information to all other members in the lobby
         UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
         inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
+    }
+
+
+    @MessageMapping("/websocket/{uuid}/leave")
+    public void leaveGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
+        System.out.println(principal.getName() + " just joined a game");
+        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+
+        PlayerState playerState = gameService.playerLeft(game, principal.getName());
+
+        // provide the user's updated information to all other members in the lobby
+        UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/left", game, principal.getName(), playerState);
     }
 
     @MessageMapping("/websocket/{uuid}/select/card")
@@ -121,7 +131,6 @@ public class InGameWebsocketController {
         PlayerState playerState = game.getPlayerState(principal.getName());
 
         // choose marbles adequately to chosen card
-
         Set<Ball> balls = game.getBoardstate().getBalls();
 
         Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, playerState.getColor());
@@ -148,14 +157,21 @@ public class InGameWebsocketController {
 
         PlayerState playerState = game.getPlayerState(principal.getName());
 
-        // chose random tiles on the board
-        Random rand = new Random();
-        int howMany = rand.nextInt(3) + 1;
-        int[] highlightedHoles = new int[howMany];
-        int index = 0;
-        for (int i = 0; i < howMany; i++) {
-            highlightedHoles[i] = rand.nextInt(64);
-        }
+        // highlight possible moves
+
+        BoardState boardState = game.getBoardstate();
+
+        Set<Ball> balls = boardState.getBalls();
+
+        Long ballId = Long.valueOf(selectMarbleDTO.getMarbleId());
+
+        Ball ball = boardState.getBallById(ballId);
+
+        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(selectMarbleDTO.getRank(), balls, ball);
+
+        Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball);
+
+        int[] highlightedHoles = highlightedHolesSet.stream().mapToInt(Integer::intValue).toArray();
 
         SelectMarbleResponseDTO selectMarbleResponseDTO = new SelectMarbleResponseDTO();
         selectMarbleResponseDTO.setMarbleId(selectMarbleDTO.getMarbleId());

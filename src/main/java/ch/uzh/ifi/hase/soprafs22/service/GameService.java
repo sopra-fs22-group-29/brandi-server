@@ -147,5 +147,31 @@ public class GameService {
         Game game = this.getGameByUuid(uuid, username); 
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
+    /**
+     * sets the player status online
+     * @param game
+     * @param playerName
+     * @return the PlayerState
+     */
+    public PlayerState playerJoined(Game game, String playerName) {
+        // set player online status
+        PlayerState playerState = game.getPlayerState(playerName);
+        playerState.setPlayerStatus(true);
+        gameRepository.saveAndFlush(game);
+        return playerState;
+    }
+
+    /**
+     * sets the player status offline
+     * @param game
+     * @param playerName
+     * @return the PlayerState
+     */
+    public PlayerState playerLeft(Game game, String playerName) {
+        // set player online status
+        PlayerState playerState = game.getPlayerState(playerName);
+        playerState.setPlayerStatus(false);
+        gameRepository.saveAndFlush(game);
+        return playerState;
     }
 }
