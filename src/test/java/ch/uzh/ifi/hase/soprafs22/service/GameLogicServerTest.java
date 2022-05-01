@@ -26,12 +26,16 @@ public class GameLogicServerTest {
     private GameLogicService gameLogicService = new GameLogicService();
 
     @InjectMocks
-    private Ball ball1= new Ball(Color.GREEN, -1);
+    private Ball ball1= new Ball(Color.GREEN, 1);
     private Ball ball2= new Ball(Color.GREEN, 0);
     private Ball ball3 = new Ball(Color.GREEN, 64);
     private Ball ball4= new Ball(Color.GREEN, 14);
     private Ball ball5 = new Ball(Color.GREEN, 16);
     private Ball ball6 = new Ball(Color.GREEN, 63);
+    private Ball ball7 = new Ball(Color.GREEN, 80);
+    private Ball ball8 = new Ball(Color.RED, 84);
+    private Ball ball9 = new Ball(Color.YELLOW, 88);
+    private Ball ball10 = new Ball(Color.BLUE, 95);
 
 
     @BeforeEach
@@ -51,7 +55,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-        Set<Integer> testHighlightedBalls = new HashSet<>(Set.of(-1, 0, 64, 14, 16, 63));
+        Set<Integer> testHighlightedBalls = new HashSet<>(Set.of(1, 0, 64, 14, 16, 63));
 
         Set<Integer> highlightedBalls = gameLogicService.highlightBalls(cardRank, balls, playerColor);
 
@@ -64,7 +68,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1,11,100));
+        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1,11));
 
         Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(cardRank, balls, ball2);
 
@@ -106,6 +110,17 @@ public class GameLogicServerTest {
 
     assertEquals(testPossibleDestinations1, possibleDestinations1);
     assertEquals(testPossibleDestinations2, possibleDestinations2);
+    }
+
+    @Test
+    public void checkCanGoOutOfHomeTest() {
+
+        Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6, ball7, ball8, ball9, ball10));
+
+        assertEquals(false, gameLogicService.checkCanGoOutOfHome(ball7, balls));
+        assertEquals(true, gameLogicService.checkCanGoOutOfHome(ball8, balls));
+        assertEquals(true, gameLogicService.checkCanGoOutOfHome(ball9, balls));
+        assertEquals(true, gameLogicService.checkCanGoOutOfHome(ball10, balls));
     }
 
 }
