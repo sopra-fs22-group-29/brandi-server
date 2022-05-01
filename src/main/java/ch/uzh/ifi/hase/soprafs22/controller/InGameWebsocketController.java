@@ -93,6 +93,8 @@ public class InGameWebsocketController {
 
         PlayerState playerState = game.getPlayerState(principal.getName());
 
+        // if(playerState == null) return;
+
         // provide the new user with the current Game State
         inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
 

@@ -91,7 +91,8 @@ public class InGameWebsocketService {
         }
 
         // User is not nextUser to play
-        if(game.getNextTurn().getPlayer().getUsername() != username){
+        String nextPlayer = game.getNextTurn().getPlayer().getUsername();
+        if(!nextPlayer.equals(username)){
             return null;
         }
 

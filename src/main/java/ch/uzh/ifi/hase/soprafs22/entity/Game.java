@@ -185,6 +185,17 @@ public class Game {
 
     public Boolean makeMove(Move move){
         Boolean moveExecuted = false;
+
+        Ball ball = null;
+        for(Ball b: this.boardstate.getBalls()){
+            if(b.getId().equals(move.getBallId())){
+                ball = b;
+                break;
+            }
+        }
+        if(ball == null) return false;
+
+        ball.setPosition(move.getDestinationTile());
         // Change activePlayer to next user
         //TODO: No idea if this works
         this.nextPlayer();
@@ -199,9 +210,11 @@ public class Game {
                 return;
             }
         }
+        this.activePlayer = null;
     }
 
     public PlayerState getNextTurn(){
+        if(this.activePlayer == null) return null;
         return this.playerStates.get(this.activePlayer);
     }
 
