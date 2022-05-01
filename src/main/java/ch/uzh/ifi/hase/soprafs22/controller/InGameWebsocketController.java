@@ -57,6 +57,9 @@ public class InGameWebsocketController {
 
         // verify move validity and add Player details to move for returning
         move = inGameWebsocketService.verifyMove(userGame, move, username);
+
+        // move == null means it wasnt users turn, simply ignore 
+        if(move == null) return;
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         
         inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
