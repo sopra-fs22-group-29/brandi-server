@@ -363,6 +363,6 @@ public class Game {
 
     public void surrenderCards(String username){
         PlayerState playerState = this.getPlayerState(username);
-        playerState.getPlayerHand().setActiveCards(null);
+        playerState.getPlayerHand().setActiveCards(new HashSet<>());
     }
 }
