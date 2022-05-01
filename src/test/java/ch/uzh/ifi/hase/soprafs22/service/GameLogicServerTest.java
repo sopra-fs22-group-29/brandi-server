@@ -69,7 +69,7 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5, ball6));
 
-        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
+        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of());
         Set<Integer> testPossibleMoves2 = new HashSet<>(Set.of(4,-4));
 
         Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(cardRank1, balls, ball2);
