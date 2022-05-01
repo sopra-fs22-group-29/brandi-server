@@ -186,6 +186,10 @@ public class GameLogicService {
 
         Color color = ball.getColor();
 
+        if (!BoardState.homePoints.contains(ball.getPosition())) {
+            return false;
+        }
+
         for (Ball b : balls) {
             if (color == b.getColor()) {
                 if (color == Color.GREEN) {
