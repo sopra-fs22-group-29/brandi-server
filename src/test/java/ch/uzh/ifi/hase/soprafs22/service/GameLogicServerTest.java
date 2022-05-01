@@ -105,15 +105,11 @@ public class GameLogicServerTest {
     Set<Integer> possibleMoves2 = new HashSet<>(Set.of(1, 11, 100));
 
     Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(1, 11));
-<<<<<<< Updated upstream
-    Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 10));
-=======
     Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 64, 10));
     Set<Integer> testPossibleDestinationsGREEN = new HashSet<>(Set.of(0));
     Set<Integer> testPossibleDestinationsRED = new HashSet<>(Set.of(16));
     Set<Integer> testPossibleDestinationsYELLOW = new HashSet<>(Set.of(32));
     Set<Integer> testPossibleDestinationsBLUE = new HashSet<>(Set.of(48));
->>>>>>> Stashed changes
 
     Set<Integer> testPossibleDestinations3 = new HashSet<>(Set.of(4, 60));
 
