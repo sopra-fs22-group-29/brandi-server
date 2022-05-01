@@ -117,24 +117,27 @@ public class GameLogicService {
         return possibleDestinations;
     }
 
-    public List<Integer> checkBallOnStarting (Ball ball, List<Ball> balls, List<Integer> possibleMoves) {
+    public Set<Integer> checkBallOnStarting (Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
         // for every possible move, we check if any ball on the way is on the starting point
-        List <Integer> toBeRemoved = new ArrayList<Integer>();
+        Set <Integer> toBeRemoved = new HashSet<>();
         for (Ball b : balls) {
             if (BoardState.startingPoints.contains(b.getPosition())) {
                 for (int possibleMove : possibleMoves) {
                     for (int i = startPos + 1; i <= startPos + possibleMove; i++) {
-                        toBeRemoved.add(possibleMove);
+                        if (b.getPosition().equals(i)) {
+                            toBeRemoved.add(possibleMove);
+                        }
+//                        System.out.println(toBeRemoved + "" + i);
                     }
                 }
             }
         }
 
         for (int i : toBeRemoved) {
-            possibleMoves.remove(Integer.valueOf(i));
+            possibleMoves.remove(i);
         }
 
         return possibleMoves;

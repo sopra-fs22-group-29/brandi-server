@@ -76,21 +76,22 @@ public class GameLogicServerTest {
 
     }
 
-//    @Test
-//    public void ballChosen_checkBallOnStarting_validPossibleMoves() {
-//
-//        List<Ball> balls = new ArrayList<>(List.of(ball1, ball2, ball3, ball4, ball5));
-//
-//        List<Integer> providedPossibleMoves = new ArrayList<>(List.of(1,11));
-//
-//        List<Integer> testPossibleMoves = new ArrayList<>(List.of(1));
-//
-//        List<Integer> possibleMoves = gameLogicService.checkBallOnStarting(ball4, balls, providedPossibleMoves);
-//
-//        System.out.println(possibleMoves);
-//        assertEquals(testPossibleMoves, possibleMoves);
-//
-//    }
+    @Test
+    public void ballChosen_checkBallOnStarting_validPossibleMoves() {
+
+        // BallPos 1, 0, 64, 14, 16
+        Set<Ball> balls = new HashSet<>(Set.of(ball1, ball2, ball3, ball4, ball5));
+
+        Set<Integer> providedPossibleMoves = new HashSet<>(Set.of(1,11));
+
+        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1));
+
+        Set<Integer> possibleMoves = gameLogicService.checkBallOnStarting(ball4, balls, providedPossibleMoves);
+
+        System.out.println(possibleMoves);
+        assertEquals(testPossibleMoves, possibleMoves);
+
+    }
 
     @Test
     public void ballChosen_validPossibleDestinations() {
