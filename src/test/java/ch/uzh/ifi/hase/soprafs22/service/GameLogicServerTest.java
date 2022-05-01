@@ -101,11 +101,19 @@ public class GameLogicServerTest {
     public void ballChosen_validPossibleDestinations() {
 
     Set<Integer> possibleMoves = new HashSet<>(Set.of(1, 11));
-
     Set<Integer> possibleMoves1 = new HashSet<>(Set.of(-4, 4));
+    Set<Integer> possibleMoves2 = new HashSet<>(Set.of(1, 11, 100));
 
     Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(1, 11));
+<<<<<<< Updated upstream
     Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 10));
+=======
+    Set<Integer> testPossibleDestinations2 = new HashSet<>(Set.of(0, 64, 10));
+    Set<Integer> testPossibleDestinationsGREEN = new HashSet<>(Set.of(0));
+    Set<Integer> testPossibleDestinationsRED = new HashSet<>(Set.of(16));
+    Set<Integer> testPossibleDestinationsYELLOW = new HashSet<>(Set.of(32));
+    Set<Integer> testPossibleDestinationsBLUE = new HashSet<>(Set.of(48));
+>>>>>>> Stashed changes
 
     Set<Integer> testPossibleDestinations3 = new HashSet<>(Set.of(4, 60));
 
@@ -113,12 +121,21 @@ public class GameLogicServerTest {
     Set<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(possibleMoves, ball2);
     Set<Integer> possibleDestinations2 = gameLogicService.getPossibleDestinations(possibleMoves, ball6);
 
-    Set<Integer> possibleDestinations3 = gameLogicService.getPossibleDestinations(possibleMoves1, ball2);
+    Set<Integer> possibleDestinationsGREEN = gameLogicService.getPossibleDestinations(possibleMoves2, ball7);
+    Set<Integer> possibleDestinationsRED = gameLogicService.getPossibleDestinations(possibleMoves2, ball8);
+    Set<Integer> possibleDestinationsYELLOW = gameLogicService.getPossibleDestinations(possibleMoves2, ball9);
+    Set<Integer> possibleDestinationsBLUE = gameLogicService.getPossibleDestinations(possibleMoves2, ball10);
 
+    Set<Integer> possibleDestinations3 = gameLogicService.getPossibleDestinations(possibleMoves1, ball2);
 
     assertEquals(testPossibleDestinations1, possibleDestinations1);
     assertEquals(testPossibleDestinations2, possibleDestinations2);
     assertEquals(testPossibleDestinations3, possibleDestinations3);
+
+    assertEquals(testPossibleDestinationsGREEN, possibleDestinationsGREEN);
+    assertEquals(testPossibleDestinationsRED, possibleDestinationsRED);
+    assertEquals(testPossibleDestinationsYELLOW, possibleDestinationsYELLOW);
+    assertEquals(testPossibleDestinationsBLUE, possibleDestinationsBLUE);
     }
 
     @Test
