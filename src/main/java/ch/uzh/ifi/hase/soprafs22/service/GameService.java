@@ -133,4 +133,19 @@ public class GameService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
     }
+
+    public void startNewRound(String uuid){
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isPresent()){
+            Game game = optGame.get();
+            game.startNewRound();
+            gameRepository.saveAndFlush(game);
+        }
+    }
+
+    public void surrenderCards(String uuid, String username) {   
+        Game game = this.getGameByUuid(uuid, username); 
+        game.surrenderCards(username);
+        gameRepository.saveAndFlush(game);
+    }
 }
