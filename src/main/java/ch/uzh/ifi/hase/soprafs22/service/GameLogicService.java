@@ -111,7 +111,13 @@ public class GameLogicService {
                 break;
             }
             // modulo div as board's last pos is 63
-            possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+            if (!((ball.getPosition() + possibleMove) < 0)) {
+                possibleDestinations.add((ball.getPosition() + possibleMove) % 64);
+            }
+            else {
+                possibleDestinations.add((ball.getPosition() + possibleMove) + 64);
+            }
+
         }
 
         return possibleDestinations;
