@@ -147,7 +147,9 @@ public class GameService {
         Game game = this.getGameByUuid(uuid, username); 
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
-    /**
+    }
+    
+        /**
      * sets the player status online
      * @param game
      * @param playerName
