@@ -56,8 +56,7 @@ public class InGameWebsocketController {
         // move == null means it wasnt users turn, simply ignore 
         if(move == null) return;
 
-        game = gameService.getGameByUuid(uuid, username);
-        inGameWebsocketService.afterMove(move, game);
+        inGameWebsocketService.afterMove(move, uuid);
     }
 
     @MessageMapping("/websocket/{uuid}/join")

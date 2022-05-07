@@ -112,11 +112,18 @@ public class InGameWebsocketService {
         return move;
     }
     
-    public void afterMove(Move move, Game game) {
+    public void afterMove(Move move, String uuid) {
+        // Need to fetch game here, not in controller because no proxy error otherwise
+        Optional<Game> optGame = gameRepository.findByUuid(uuid);
+        if(optGame.isEmpty()) return;
+        Game game = optGame.get();
+
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         String username = move.getUser().getUsername();
 
         this.notifyAllGameMembers("/client/move", game, moveDTO); 
+
+        
 
         PlayerState nextUser = game.getNextTurn();
         if(nextUser == null){ // No user can play any cards anymore -> Start new round
