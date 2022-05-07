@@ -53,10 +53,10 @@ public class InGameWebsocketController {
         // verify move validity, make move in game, add Player details to move for returning
         move = inGameWebsocketService.verifyMove(game, move, username);
 
-        // move == null means it wasnt users turn, simply ignore 
+        // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
-        inGameWebsocketService.afterMove(move, uuid);
+        inGameWebsocketService.notifyPlayersAfterMove(move, uuid);
     }
 
     @MessageMapping("/websocket/{uuid}/join")

@@ -92,8 +92,8 @@ public class InGameWebsocketService {
         // Add user details to move so that everybody knows who made the move
         User user = userRepository.findByUsername(username);
         if(this.checkHasNoCardsLeft(game, username)){
-            // TODO: Should this also just return null (move simply gets ignored)?
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, username + " has no cards left to make a move");
+            System.out.println(username + " has no cards left to make a move");
+            return null;
         }
 
         // User is not nextUser to play
@@ -112,7 +112,7 @@ public class InGameWebsocketService {
         return move;
     }
     
-    public void afterMove(Move move, String uuid) {
+    public void notifyPlayersAfterMove(Move move, String uuid) {
         // Need to fetch game here, not in controller because no proxy error otherwise
         Optional<Game> optGame = gameRepository.findByUuid(uuid);
         if(optGame.isEmpty()) return;
@@ -202,6 +202,11 @@ public class InGameWebsocketService {
     }
 
     public void noMovePossible(Game game, String username){
+        // Need to refetch game here because no proxy error otherwise
+        Optional<Game> optGame = gameRepository.findByUuid(game.getUuid());
+        if(optGame.isEmpty()) return;
+        game = optGame.get();
+
         // User can choose no other card and play with that: Delete cards
         game = this.surrenderCards(game, username);
         // Move to next user
