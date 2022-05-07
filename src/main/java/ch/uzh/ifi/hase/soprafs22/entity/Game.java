@@ -130,7 +130,7 @@ public class Game {
             if (optGameId.isPresent()) {
                 if(!optGameId.get().equals(this.id)){
                     // TODO: make sure that a user can't play in multiple game simultaneously
-                    //  throw new Error("User is already in a different game");
+                     throw new Error("User is already in a different game");
                 } else{
                     // User is already in this game
                     return true;

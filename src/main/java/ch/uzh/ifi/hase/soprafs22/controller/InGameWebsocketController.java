@@ -48,7 +48,7 @@ public class InGameWebsocketController {
         // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
         String username = principal.getName();
-        Game userGame = gameService.getGameByUuid(uuid, username);
+        Game userGame = gameService.getGameByUuidOfUser(uuid, username);
 
         // verify move validity and add Player details to move for returning
         move = inGameWebsocketService.verifyMove(userGame, move, username);
@@ -59,7 +59,7 @@ public class InGameWebsocketController {
         
         inGameWebsocketService.notifyAllGameMembers("/client/move", userGame, moveDTO); 
 
-        userGame = gameService.getGameByUuid(uuid, username);
+        userGame = gameService.getGameByUuidOfUser(uuid, username);
 
         PlayerState nextUser = userGame.getNextTurn();
         if(nextUser == null){
@@ -89,7 +89,7 @@ public class InGameWebsocketController {
     @MessageMapping("/websocket/{uuid}/join")
     public void joinGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
         System.out.println(principal.getName() + " just joined a game");
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        Game game = gameService.getGameByUuid(uuid);
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
@@ -112,8 +112,8 @@ public class InGameWebsocketController {
 
     @MessageMapping("/websocket/{uuid}/leave")
     public void leaveGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
-        System.out.println(principal.getName() + " just joined a game");
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        System.out.println(principal.getName() + " just left a game");
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
@@ -129,7 +129,7 @@ public class InGameWebsocketController {
     public void selectCard(@DestinationVariable String uuid, CardDTO card, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a card");
 
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
@@ -192,7 +192,7 @@ public class InGameWebsocketController {
     public void selectMarble(@DestinationVariable String uuid, SelectMarbleDTO selectMarbleDTO, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a marble");
 
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
@@ -235,7 +235,7 @@ public class InGameWebsocketController {
 
         // we still have to verify if the player is actually playing in the game with that uuid
 
-        Game game = gameService.getGameByUuid(uuid, principal.getName());
+        Game game = gameService.getGameByUuid(uuid);
 
         // the payload can be a anything you want to send to the clients
         inGameWebsocketService.notifyAllGameMembers("/client/test", game, principal.getName() + " sent a test message!");
