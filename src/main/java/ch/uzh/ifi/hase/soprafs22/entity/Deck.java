@@ -15,6 +15,8 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.DeckOfCardsAPI.*;
 public class Deck {
 
     private final static String baseUrl = "https://deckofcardsapi.com/api/";
+    private final static String[] AVAILABLE_SUITS = new String[]{"S", "D", "C", "H"};
+    private final static String[] AVAILABLE_RANKS = new String[]{"2", "3", "4", "5", "6", "8", "9", "0", "Q", "K", "A"};
 
     @Id
     @GeneratedValue
@@ -29,9 +31,16 @@ public class Deck {
     public Deck() {}
 
     public void initialize() {
-        String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
-
-        DeckDTO result = this.restTemplate.getForObject(url, DeckDTO.class);
+//        String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
+        StringBuilder url = new StringBuilder("https://deckofcardsapi.com/api/deck/new/shuffle/?cards=");
+        for(String suit : AVAILABLE_SUITS) {
+            for(String rank : AVAILABLE_RANKS) {
+                url.append(rank).append(suit).append(",");
+            }
+        }
+        url.deleteCharAt(url.length() - 1);
+        System.out.println(url.toString());
+        DeckDTO result = this.restTemplate.getForObject(url.toString(), DeckDTO.class);
 
         this.deck_id = result.getDeck_id();
         System.out.println("Deck initialized");

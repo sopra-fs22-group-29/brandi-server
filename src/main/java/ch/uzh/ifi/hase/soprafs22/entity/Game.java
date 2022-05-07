@@ -47,7 +47,7 @@ public class Game {
 	@JoinColumn(name = "BoardState_id")
     private BoardState boardstate;
     
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "Deck_id")
     private Deck deck;
 
