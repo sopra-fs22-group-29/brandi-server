@@ -163,6 +163,7 @@ public class Game {
     }
 
     public void startNewRound(){
+        this.deck.refillDeck();
         this.roundsPlayed += 1;
 
         List<Integer> amounts = Arrays.asList(6, 5, 4, 3, 2);

@@ -30,10 +30,17 @@ public class Deck {
     public Deck(){
         this.baseUrl = "https://deckofcardsapi.com/api/";
         String url = this.baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
+
         this.restTemplate = new RestTemplate();
         DeckDTO result = this.restTemplate.getForObject(url, DeckDTO.class);
-        System.out.println();
+
         this.deck_id = result.getDeck_id();
+    }
+
+    public void refillDeck(){
+        String url = String.format("%sdeck/%s/return/", this.baseUrl, this.deck_id);
+        this.restTemplate.getForObject(url, String.class);
+        System.out.println("Deck was refilled successfully");
     }
 
     public Card drawCard(){
@@ -47,7 +54,10 @@ public class Deck {
         
         String url = String.format("%sdeck/%s/draw/?count=%d", this.baseUrl, this.deck_id, amount);
         DrawCardsDTO result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
-
+        if(!result.getSuccess()){
+            this.refillDeck();
+            result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
+        }
         for(CardDTO cardDTO: result.getCards()){
             cards.add(this.toCard(cardDTO));
         }
@@ -57,7 +67,7 @@ public class Deck {
 
     /**
      * 
-     * @param cardDTO Representation from DeckOfCardsAPI
+     * @param cardDTO Card in representation from DeckOfCardsAPI
      * @return Card in internal representation 
      */
     private Card toCard(CardDTO cardDTO){

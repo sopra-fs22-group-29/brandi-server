@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DrawCardsDTO {
     private List<CardDTO> cards;
+    private Boolean success;
 
     public List<CardDTO> getCards() {
         return this.cards;
@@ -12,5 +13,14 @@ public class DrawCardsDTO {
     public void setCards(List<CardDTO> cards) {
         this.cards = cards;
     }
+
+    public Boolean getSuccess() {
+        return this.success;
+    }
+
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
 
 }
