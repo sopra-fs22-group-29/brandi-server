@@ -95,13 +95,9 @@ public class Game {
     /* Create PlayerState for every player with 6 cards in playerHand, assign team and color randomly */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
-        HashSet<Card> cards = new HashSet<>();
+        
 
-        for(int i = 0; i < 6; i++){
-            cards.add(this.deck.drawCard());
-        }
-
-        playerHand.drawCards(cards);
+        playerHand.drawCards(this.deck.drawCards(6));
 
         // Team assigned to user by order of joining, users join teams alternatingly
         Integer team = this.playerStates.size() % 2;
@@ -170,17 +166,11 @@ public class Game {
         this.roundsPlayed += 1;
 
         List<Integer> amounts = Arrays.asList(6, 5, 4, 3, 2);
-        Integer numCardsToPlay = roundsPlayed % 5;
+        Integer numCardsToPlay = amounts.get(roundsPlayed % 5);
 
         // Draw new cards for each player
         for(PlayerState playerState : this.playerStates){
-            HashSet<Card> cards = new HashSet<>();
-
-            for(int i = 0; i < amounts.get(numCardsToPlay); i++){
-                cards.add(this.deck.drawCard());
-            }
-
-            playerState.drawCards(cards);
+            playerState.drawCards(this.deck.drawCards(numCardsToPlay));
         }
         this.activePlayer = 0;
     }
