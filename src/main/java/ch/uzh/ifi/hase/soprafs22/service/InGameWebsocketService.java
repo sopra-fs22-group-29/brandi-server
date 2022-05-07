@@ -129,6 +129,7 @@ public class InGameWebsocketService {
         if(nextUser == null){ // No user can play any cards anymore -> Start new round
             game.startNewRound();;
             nextUser = game.getNextTurn();
+            game = gameRepository.saveAndFlush(game);
             for(PlayerState playerState: game.getPlayerStates()){
                 // Send new Cards to all users
                 this.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
@@ -142,7 +143,6 @@ public class InGameWebsocketService {
             this.notifySpecificUser("/client/cards", username, state.getPlayerHand());
         }
 
-        gameRepository.saveAndFlush(game);
     }
 
     public Boolean checkIsNext(Game game, String username){

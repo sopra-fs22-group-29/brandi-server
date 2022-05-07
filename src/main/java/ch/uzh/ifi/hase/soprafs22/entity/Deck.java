@@ -24,7 +24,7 @@ public class Deck {
     private String deck_id;
 
     @Transient
-    private RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
 
     public Deck(){
         System.out.println("Deck constructor called");
@@ -33,7 +33,6 @@ public class Deck {
     public void initialize() {
         String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
 
-        this.restTemplate = new RestTemplate();
         DeckDTO result = this.restTemplate.getForObject(url, DeckDTO.class);
 
         this.deck_id = result.getDeck_id();
