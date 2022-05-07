@@ -27,7 +27,7 @@ public class PlayerState {
     private Long id;
 
     //FIXME: Does this mean that User gets deleted when one of his games is deleted?
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private User player;
 
     // it is the players turn

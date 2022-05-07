@@ -26,9 +26,7 @@ public class Deck {
     @Transient
     private RestTemplate restTemplate = new RestTemplate();
 
-    public Deck(){
-        System.out.println("Deck constructor called");
-    }
+    public Deck() {}
 
     public void initialize() {
         String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
@@ -39,65 +37,65 @@ public class Deck {
         System.out.println("Deck initialized");
     }
 
-    public void refillDeck(){
+    public void refillDeck() {
         String url = String.format("%sdeck/%s/return/", baseUrl, this.deck_id);
         this.restTemplate.getForObject(url, String.class);
         System.out.println("Deck was refilled successfully");
     }
 
-    public Card drawCard(){
+    public Card drawCard() {
         String url = String.format("%sdeck/%s/draw/?count=1", baseUrl, this.deck_id);
-        DrawCardsDTO result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
+        DrawCardsDTO result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
         return this.toCard(result.getCards().get(0));
     }
 
-    public Set<Card> drawCards(int amount){
+    public Set<Card> drawCards(int amount) {
         Set<Card> cards = new HashSet<>();
-        
         String url = String.format("%sdeck/%s/draw/?count=%d", baseUrl, this.deck_id, amount);
-        DrawCardsDTO result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
-        if(!result.getSuccess()){
+
+        DrawCardsDTO result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
+        if (!result.getSuccess()) {
             this.refillDeck();
-            result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
+            result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
         }
-        for(CardDTO cardDTO: result.getCards()){
+        for (CardDTO cardDTO : result.getCards()) {
             cards.add(this.toCard(cardDTO));
         }
-        
+
         return cards;
     }
 
     /**
-     * 
      * @param cardDTO Card in representation from DeckOfCardsAPI
-     * @return Card in internal representation 
+     * @return Card in internal representation
      */
-    private Card toCard(CardDTO cardDTO){
+    private Card toCard(CardDTO cardDTO) {
         // Joker has suit black, jokers suit doesnt matter anyway so map to club as default
         Map<String, Suit> suitMap = Map.of(
-            "DIAMONDS", Suit.DIAMOND,
-            "CLUBS", Suit.CLUB,
-            "SPADES", Suit.SPADE,
-            "HEARTS", Suit.HEART,
-            "BLACK",  Suit.CLUB
+                "DIAMONDS", Suit.DIAMOND,
+                "CLUBS", Suit.CLUB,
+                "SPADES", Suit.SPADE,
+                "HEARTS", Suit.HEART,
+                "BLACK", Suit.CLUB,
+                "RED", Suit.CLUB
         );
 
         // Map.of only allows 10 KV pairs, use Map.ofEntries
         Map<String, Rank> rankMap = Map.ofEntries(
-            Map.entry("2", Rank.TWO),
-            Map.entry("3", Rank.THREE),
-            Map.entry("4", Rank.FOUR),
-            Map.entry("5", Rank.FIVE),
-            Map.entry("6", Rank.SIX),
-            Map.entry("7", Rank.SEVEN),
-            Map.entry("8", Rank.EIGHT),
-            Map.entry("9", Rank.NINE),
-            Map.entry("10", Rank.TEN),
-            Map.entry("JACK", Rank.JACK),
-            Map.entry("QUEEN", Rank.QUEEN),
-            Map.entry("KING", Rank.KING),
-            Map.entry("ACE", Rank.ACE),
-            Map.entry("JOKER", Rank.JOKER)
+                Map.entry("2", Rank.TWO),
+                Map.entry("3", Rank.THREE),
+                Map.entry("4", Rank.FOUR),
+                Map.entry("5", Rank.FIVE),
+                Map.entry("6", Rank.SIX),
+                Map.entry("7", Rank.SEVEN),
+                Map.entry("8", Rank.EIGHT),
+                Map.entry("9", Rank.NINE),
+                Map.entry("10", Rank.TEN),
+                Map.entry("JACK", Rank.JACK),
+                Map.entry("QUEEN", Rank.QUEEN),
+                Map.entry("KING", Rank.KING),
+                Map.entry("ACE", Rank.ACE),
+                Map.entry("JOKER", Rank.JOKER)
         );
 
         Rank rank = rankMap.get(cardDTO.getValue());

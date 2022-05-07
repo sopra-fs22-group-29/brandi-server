@@ -112,12 +112,7 @@ public class InGameWebsocketService {
         return move;
     }
     
-    public void notifyPlayersAfterMove(Move move, String uuid) {
-        // Need to fetch game here, not in controller because no proxy error otherwise
-        Optional<Game> optGame = gameRepository.findByUuid(uuid);
-        if(optGame.isEmpty()) return;
-        Game game = optGame.get();
-
+    public void notifyPlayersAfterMove(Game game, Move move) {
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         String username = move.getUser().getUsername();
 

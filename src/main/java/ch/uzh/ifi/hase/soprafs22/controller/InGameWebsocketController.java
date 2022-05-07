@@ -48,6 +48,7 @@ public class InGameWebsocketController {
         // Get move, username, game
         Move move = DTOMapper.INSTANCE.convertMovePostDTOtoEntity(MovePostDTO);
         String username = principal.getName();
+
         Game game = gameService.getGameByUuid(uuid, username);
 
         // verify move validity, make move in game, add Player details to move for returning
@@ -56,7 +57,7 @@ public class InGameWebsocketController {
         // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
-        inGameWebsocketService.notifyPlayersAfterMove(move, uuid);
+        inGameWebsocketService.notifyPlayersAfterMove(game, move);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
