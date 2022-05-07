@@ -28,6 +28,7 @@ public class Deck {
     private String baseUrl;
 
     public Deck(){
+        System.out.println("Deck constructor called");
         this.baseUrl = "https://deckofcardsapi.com/api/";
         String url = this.baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
 
