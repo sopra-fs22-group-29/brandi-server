@@ -14,6 +14,8 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.DeckOfCardsAPI.*;
 @Entity
 public class Deck {
 
+    private final static String baseUrl = "https://deckofcardsapi.com/api/";
+
     @Id
     @GeneratedValue
     private Long id;
@@ -24,28 +26,28 @@ public class Deck {
     @Transient
     private RestTemplate restTemplate;
 
-    @Transient
-    private String baseUrl;
-
     public Deck(){
         System.out.println("Deck constructor called");
-        this.baseUrl = "https://deckofcardsapi.com/api/";
-        String url = this.baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
+    }
+
+    public void initialize() {
+        String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
 
         this.restTemplate = new RestTemplate();
         DeckDTO result = this.restTemplate.getForObject(url, DeckDTO.class);
 
         this.deck_id = result.getDeck_id();
+        System.out.println("Deck initialized");
     }
 
     public void refillDeck(){
-        String url = String.format("%sdeck/%s/return/", this.baseUrl, this.deck_id);
+        String url = String.format("%sdeck/%s/return/", baseUrl, this.deck_id);
         this.restTemplate.getForObject(url, String.class);
         System.out.println("Deck was refilled successfully");
     }
 
     public Card drawCard(){
-        String url = String.format("%sdeck/%s/draw/?count=1", this.baseUrl, this.deck_id);
+        String url = String.format("%sdeck/%s/draw/?count=1", baseUrl, this.deck_id);
         DrawCardsDTO result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
         return this.toCard(result.getCards().get(0));
     }
@@ -53,7 +55,7 @@ public class Deck {
     public Set<Card> drawCards(int amount){
         Set<Card> cards = new HashSet<>();
         
-        String url = String.format("%sdeck/%s/draw/?count=%d", this.baseUrl, this.deck_id, amount);
+        String url = String.format("%sdeck/%s/draw/?count=%d", baseUrl, this.deck_id, amount);
         DrawCardsDTO result =  this.restTemplate.getForObject(url, DrawCardsDTO.class);
         if(!result.getSuccess()){
             this.refillDeck();

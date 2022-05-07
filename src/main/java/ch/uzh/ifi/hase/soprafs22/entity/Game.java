@@ -59,11 +59,12 @@ public class Game {
 
     public Game() {}
 
-    public Game(User player) {    
+    public Game(User player) {
         this.gameOver = false;
         this.gameOn = false;
         this.roundsPlayed = 0;
         this.deck = new Deck();
+        this.deck.initialize();
         this.unusedColors = new ArrayList<Color>(Arrays.asList(Color.values()));
         this.playerStates = new ArrayList<PlayerState>();
         this.addPlayer(player);
