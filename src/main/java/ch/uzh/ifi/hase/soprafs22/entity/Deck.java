@@ -43,7 +43,6 @@ public class Deck {
         DeckDTO result = this.restTemplate.getForObject(url.toString(), DeckDTO.class);
 
         this.deck_id = result.getDeck_id();
-        System.out.println("Deck initialized");
     }
 
     public void refillDeck() {
