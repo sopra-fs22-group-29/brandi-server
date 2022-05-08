@@ -44,7 +44,6 @@ public class BoardState {
     public BoardState() {}
 
     public BoardState(Set<Ball> balls) {
-        System.out.println("BoardState constructor called");
         this.balls = balls;
     }
 
