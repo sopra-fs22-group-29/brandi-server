@@ -261,21 +261,22 @@ public class InGameWebsocketService {
         return game;
     }
 
-    private Boolean checkCanUseCard(Game game, Card card){
+    public Boolean checkCanUseCard(Game game, Card playedCard){
         Card lastCard = game.getLastCardPlayed();
 
         // Last move was by a different person, lastCardPlayed was reset after move
         if(lastCard == null) return true;
         // Trying to use different card from last move
-        if(!(card.getId() == null) && !lastCard.getId().equals(card.getId())){
+        if(playedCard.getId() != null && !lastCard.getId().equals(playedCard.getId())){
             System.out.println(String.format("Cant use that card: LastCardPlayed = %s of %s, your card = %s of %s",
-                                 lastCard.getRank(), lastCard.getSuit(), card.getRank(), card.getSuit()));
+                                 lastCard.getRank(), lastCard.getSuit(), playedCard.getRank(), playedCard.getSuit()));
             return false;
         }
         // Card id not sent with request, need to check manually
-        if(lastCard.getRank().equals(Rank.SEVEN)){
+        if(lastCard.getRank().equals(Rank.SEVEN) && playedCard.getRank().equals(Rank.SEVEN)){
             return true;
         }
-        return true;
+        System.out.println("Can't use that card");
+        return false;
     }
 }

@@ -53,6 +53,8 @@ public class InGameWebsocketController {
         String username = principal.getName();
         Game game = gameService.getGameByUuidOfUser(uuid, username);
 
+        if(!inGameWebsocketService.checkCanUseCard(game, move.getPlayedCard())) return;
+
         if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
             Ball ball = game.getBoardstate().getBallById(move.getBallId());
             // TODO: SHould withDest be true or false??
