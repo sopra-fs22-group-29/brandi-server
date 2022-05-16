@@ -2,9 +2,11 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Optional;
 import java.util.Set;
@@ -107,15 +109,19 @@ public class Game {
     /* Create PlayerState for every player with 6 cards in playerHand, assign team and color randomly */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
-        
-
         playerHand.drawCards(this.deck.drawCards(6));
 
-        // Team assigned to user by order of joining, users join teams alternatingly
-        Integer team = this.playerStates.size() % 2;
+        //TODO: Should probably be moved elsewhere
+        Map<Color, Integer> ColorToTeam = Map.of(
+            Color.GREEN, 0,
+            Color.BLUE, 1,
+            Color.RED, 1,
+            Color.YELLOW, 0
+        );
         // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
         Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
 
+        Integer team = ColorToTeam.get(userColor);
         this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 

@@ -54,12 +54,8 @@ public class InGameWebsocketService {
         game.getPlayerStates().forEach((playerState) -> {
             sentTo.add(playerState.getPlayer().getUsername());
         });
-//        System.out.println("created sendTo list");
-//        System.out.println(sentTo);
 
         sentTo.forEach((send) -> {
-//            String msg = send + " is getting a notification from " + principal.getName();
-//            System.out.println(msg);
             simpMessagingTemplate.convertAndSendToUser(send, route, payload);
         });
     }
@@ -123,7 +119,9 @@ public class InGameWebsocketService {
         this.notifyAllGameMembers("/client/move", game, moveDTO); 
 
         PlayerState nextUser = game.getNextTurn();
-        if(nextUser == null){ // No user can play any cards anymore -> Start new round
+
+        // No user can play any cards anymore -> Start new round
+        if(nextUser == null){ 
             game.startNewRound();
             nextUser = game.getNextTurn();
             game = gameRepository.saveAndFlush(game);
@@ -138,21 +136,17 @@ public class InGameWebsocketService {
         } else if(move.getUser().getId().equals(nextUser.getPlayer().getId())
                 && game.getLastCardPlayed() != null 
                 && game.getLastCardPlayed().getId().equals(move.getCardId())){
-
-            System.out.println("move.getplayedcard = " + move.getPlayedCard().getRank());
             
             int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
             HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
             highlightMarblesDTO.setIndex(move.getIndex());
-            System.out.println("User moved with card of index " + highlightMarblesDTO.getIndex());
             highlightMarblesDTO.setMarbles(marbles);
 
             // provide the user with a list of marbles he could move
             this.notifySpecificUser("/client/highlight/marbles", username, highlightMarblesDTO);
-            // Resend cards to update hand in frontend
-            /* PlayerState state = game.getPlayerState(username);
-            this.notifySpecificUser("/client/cards", username, state.getPlayerHand()); */
+            
+        // Normal case: User made a move, nextUser can now make a move
         }  else {
             // Send next user to all users, send updated cards to user that moved
             this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
@@ -207,9 +201,7 @@ public class InGameWebsocketService {
         if(marblesSet.isEmpty()){
             return false;
         }
-        // check marblesset empty
-        //if so, then check all cards
-        // notify next
+        
         int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
         HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
