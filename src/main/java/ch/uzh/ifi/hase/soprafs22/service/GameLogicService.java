@@ -250,9 +250,62 @@ public class GameLogicService {
                 holesTraveled.replaceAll(e -> e % 64);
             }
             // NORMAL CASE
-            else if (moveLength <= 13) {
+            else if ((moveLength <= 13) && !BoardState.basePoints.contains(destination)) {
                 for (int i = ballPosition; i <= destination; i++) {
                     holesTraveled.add(i);
+                }
+            }
+            // WHEN GOING INTO BASE
+            else {
+                // TO GREEN BASE
+                if (64 <= destination && destination <= 67) {
+
+                    for (int i = ballPosition; i <= 63; i++) {
+                        holesTraveled.add(i);
+                    }
+
+                    holesTraveled.add(0);
+
+                    for (int j = 64; j <= destination; j++) {
+                        holesTraveled.add(j);
+                    }
+
+                }
+                // TO RED
+                else if (68 <= destination && destination <= 71) {
+
+                    for (int i = ballPosition; i <= 16; i++) {
+                        holesTraveled.add(i);
+                    }
+
+                    for (int j = 68; j <= destination; j++) {
+                        holesTraveled.add(j);
+                    }
+
+                }
+                // TO YELLOW
+                else if (72 <= destination && destination <= 75) {
+
+                    for (int i = ballPosition; i <= 32; i++) {
+                        holesTraveled.add(i);
+                    }
+
+                    for (int j = 72; j <= destination; j++) {
+                        holesTraveled.add(j);
+                    }
+
+                }
+                // TO BLUE
+                else {
+
+                    for (int i = ballPosition; i <= 48; i++) {
+                        holesTraveled.add(i);
+                    }
+
+                    for (int j = 76; j <= destination; j++) {
+                        holesTraveled.add(j);
+                    }
+
                 }
             }
 
