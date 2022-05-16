@@ -104,9 +104,9 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green64, green66));
 
-        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,2,3));
+        Set<Integer> testPossibleDestinations1 = new HashSet<>(Set.of(65,66,67));
 
-        assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayInBase(green64, balls, testPossibleMoves1));
+        assertEquals(Set.of(65), gameLogicService.checkBallOnTheWayInBase(green64, balls, testPossibleDestinations1));
 
     }
 

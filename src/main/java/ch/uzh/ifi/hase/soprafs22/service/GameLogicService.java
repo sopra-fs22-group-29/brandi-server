@@ -88,9 +88,6 @@ public class GameLogicService {
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
         possibleMoves = excludeTooLongMoves(ball, possibleMoves);
 
-        // IF BALL ON THE WAY IN BASE DISABLE MOVES OVER IT *ONLY FOR IN BASE BALLS*
-        possibleMoves = checkBallOnTheWayInBase(ball, balls, possibleMoves);
-
         return possibleMoves;
     }
 
@@ -142,6 +139,8 @@ public class GameLogicService {
             if (checkSameColorBallOnDestination(ball, balls, possibleDestination)) {toBeRemoved.add(possibleDestination);}
         }
         for(int i : toBeRemoved) {newDestinations.remove(i);}
+
+        newDestinations = checkBallOnTheWayInBase(ball, balls, newDestinations);
 
         return newDestinations;
     }
@@ -471,21 +470,19 @@ public class GameLogicService {
         return false;
     }
 
-    public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+    public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleDestinations) {
 
-        if (ball.checkBallInBase()) {
-            int startPos = ball.getPosition();
             Color color = ball.getColor();
 
-            Set<Integer> tempMoves = new HashSet<>(possibleMoves);
+            Set<Integer> tempDestinations = new HashSet<>(possibleDestinations);
             Set<Integer> toBeRemoved = new HashSet<>();
 
             for (Ball b: balls) {
                 int pos = b.getPosition();
-                if (b.getColor() == color && b.checkBallInBase() && pos > startPos) {
-                    for (int possibleMove : tempMoves) {
-                        if (startPos + possibleMove >= pos) {
-                            toBeRemoved.add(possibleMove);
+                if (b.getColor() == color && b.checkBallInBase() && ball != b) {
+                    for (int destination : tempDestinations) {
+                        if (destination >= pos) {
+                            toBeRemoved.add(destination);
                         }
                     }
                 }
@@ -493,13 +490,10 @@ public class GameLogicService {
             }
 
             for (int i : toBeRemoved) {
-                tempMoves.remove(i);
+                tempDestinations.remove(i);
             }
 
-            return tempMoves;
-        }
-
-        return possibleMoves;
+            return tempDestinations;
 
     }
 
