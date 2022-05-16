@@ -38,6 +38,7 @@ public class GameLogicServerTest {
     private final Ball red85 = new Ball(Color.RED, 85);
     private final Ball red86 = new Ball(Color.RED, 86);
     private final Ball red68 = new Ball(Color.RED, 68);
+    private final Ball red1 = new Ball(Color.RED, 1);
     private final Ball red15 = new Ball(Color.RED, 15);
     private final Ball red16 = new Ball(Color.RED, 16);
     private final Ball red17 = new Ball(Color.RED, 17);
@@ -247,7 +248,7 @@ public class GameLogicServerTest {
     @Test
     public void ballBackToHomeTest() {
 
-        Set<Ball> balls = new HashSet<Ball>(Set.of(green1,green81,green82,green83,
+        Set<Ball> balls = new HashSet<>(Set.of(green1,green81,green82,green83,
                 red17,red84,red85,red86,
                 yellow33,yellow88,yellow89,yellow91,
                 blue49,blue92,blue93,blue94));
@@ -263,5 +264,20 @@ public class GameLogicServerTest {
         assertEquals(95, blue49.getPosition());
 
     }
+
+//    @Test
+//    public void jackChosen_ProperDestinations() {
+//
+//        Set<Ball> balls = new HashSet<>(Set.of(green0,green14,green64,green81,
+//                red1,red16,red17,red68,red85,
+//                yellow32,yellow33,yellow72,yellow88,
+//                blue48,blue49,blue76,blue92));
+//
+//        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(Rank.JACK, balls, green14);
+//        Set<Integer> possibleDestinations = gameLogicService.getPossibleDestinations(possibleMoves, green14, balls);
+//
+//        assertEquals(Set.of(1,17,33,49), possibleDestinations);
+//
+//    }
 
 }

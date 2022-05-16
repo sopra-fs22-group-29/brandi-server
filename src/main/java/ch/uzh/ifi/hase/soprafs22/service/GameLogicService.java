@@ -56,18 +56,6 @@ public class GameLogicService {
             possibleMoves.add(6);
             possibleMoves.add(7);
         }
-        else if (cardRank.equals(Rank.JACK)) {
-            // EXCHANGE TWO BALLS
-            // A marble positioned for the first time at the start, at home or in the
-            // target area, may not be exchanged.
-            for (Ball b : balls) {
-                int ballPos = ball.getPosition();
-                if (!BoardState.startingPoints.contains(ballPos)
-                        && ballPos >= 0 && ballPos <= 63 ) {
-                    possibleMoves.add(ball.getPosition());
-                }
-            }
-        }
         else if (cardRank.equals(Rank.KING)) {
             // MOVE BY 13 OR INVOKE A BALL FROM HOME
 
@@ -87,6 +75,24 @@ public class GameLogicService {
 
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
         possibleMoves = excludeTooLongMoves(ball, possibleMoves);
+
+        // TODO: THIS IMPLEMENTS JACK WITH KILLING INSTEAD OF EXCHANGING POSITION; WILL HAVE TO MAKE SEPARATE CALL AS FOR THE 7
+//        if (cardRank.equals(Rank.JACK)) {
+//            // EXCHANGE TWO BALLS
+//            // A marble positioned at the start, at home or in the
+//            // target area, may not be exchanged.
+//            for (Ball b : balls) {
+//                int ballPos = b.getPosition();
+//                if (!getStartPosition(b).contains(b.getPosition())
+//                        && ballPos >= 0 && ballPos <= 63
+//                        && b != ball) {
+//
+//                    int possibleMove = b.getPosition() - ball.getPosition();
+//                    possibleMoves.add(possibleMove);
+//
+//                }
+//            }
+//        }
 
         return possibleMoves;
     }
