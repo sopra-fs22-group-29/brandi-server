@@ -7,6 +7,15 @@ public class MovePostDTO {
     private Long ballId;
     private int destinationTile;
     private Card playedCard;
+    private int index;
+
+    public int getIndex() {
+        return this.index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
     public int getDestinationTile() {
         return destinationTile;

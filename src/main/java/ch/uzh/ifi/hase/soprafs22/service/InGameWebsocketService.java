@@ -145,10 +145,14 @@ public class InGameWebsocketService {
 
             HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
             highlightMarblesDTO.setIndex(move.getIndex());
+            System.out.println("User moved with card of index " + highlightMarblesDTO.getIndex());
             highlightMarblesDTO.setMarbles(marbles);
 
             // provide the user with a list of marbles he could move
             this.notifySpecificUser("/client/highlight/marbles", username, highlightMarblesDTO);
+            // Resend cards to update hand in frontend
+            /* PlayerState state = game.getPlayerState(username);
+            this.notifySpecificUser("/client/cards", username, state.getPlayerHand()); */
         }  else {
             // Send next user to all users, send updated cards to user that moved
             this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
