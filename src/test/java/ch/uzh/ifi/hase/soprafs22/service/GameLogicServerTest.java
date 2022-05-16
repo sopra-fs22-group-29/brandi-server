@@ -174,6 +174,10 @@ public class GameLogicServerTest {
         List<Integer> from88to32 = gameLogicService.getHolesTravelled(32,88,true);
         List<Integer> from92to48 = gameLogicService.getHolesTravelled(48,92,true);
 
+        List<Integer> from64to65 = gameLogicService.getHolesTravelled(65,64,true);
+        List<Integer> from68to69 = gameLogicService.getHolesTravelled(69,68,true);
+        List<Integer> from72to73 = gameLogicService.getHolesTravelled(73,72,true);
+        List<Integer> from76to77 = gameLogicService.getHolesTravelled(77,76,true);
 
         List<Integer> from0to6 = gameLogicService.getHolesTravelled(6,0,true);
         List<Integer> from62to4 = gameLogicService.getHolesTravelled(4,62,true);
@@ -190,6 +194,11 @@ public class GameLogicServerTest {
         assertEquals(List.of(84,16), from84to16);
         assertEquals(List.of(88,32), from88to32);
         assertEquals(List.of(92,48), from92to48);
+
+        assertEquals(List.of(64,65), from64to65);
+        assertEquals(List.of(68,69), from68to69);
+        assertEquals(List.of(72,73), from72to73);
+        assertEquals(List.of(76,77), from76to77);
 
         assertEquals(List.of(0,1,2,3,4,5,6), from0to6);
         assertEquals(List.of(62,63,0,1,2,3,4), from62to4);

@@ -249,26 +249,26 @@ public class GameLogicService {
                 }
                 holesTraveled.replaceAll(e -> e % 64);
             }
-            // NORMAL CASE
-            else if ((moveLength <= 13) && !BoardState.basePoints.contains(destination)) {
+            // WHEN MOVING AROUND BOARD AND IN THE BASE
+            else if ((moveLength <= 13) || BoardState.basePoints.contains(destination) && BoardState.basePoints.contains(ballPosition)) {
                 for (int i = ballPosition; i <= destination; i++) {
                     holesTraveled.add(i);
                 }
             }
-            // WHEN GOING INTO BASE
-            else {
+            // WHEN GOING INTO BASE FROM BOARD
+            else if (ballPosition < 64){
                 // TO GREEN BASE
                 if (64 <= destination && destination <= 67) {
 
-                    for (int i = ballPosition; i <= 63; i++) {
-                        holesTraveled.add(i);
-                    }
+                        for (int i = ballPosition; i <= 63; i++) {
+                            holesTraveled.add(i);
+                        }
 
-                    holesTraveled.add(0);
+                        holesTraveled.add(0);
 
-                    for (int j = 64; j <= destination; j++) {
-                        holesTraveled.add(j);
-                    }
+                        for (int j = 64; j <= destination; j++) {
+                            holesTraveled.add(j);
+                        }
 
                 }
                 // TO RED
