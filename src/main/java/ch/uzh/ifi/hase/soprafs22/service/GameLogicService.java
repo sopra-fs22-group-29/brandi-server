@@ -185,19 +185,19 @@ public class GameLogicService {
             }
             else if (color.equals(Color.RED)) {
                 baseMove = ballPos + possibleMove + 51;
-                if (baseMove <= 71 && baseMove >= 68) {
+                if (baseMove <= 71 && baseMove >= 68 && ballPos < 16) {
                     possibleDestinations.add(baseMove);
                 }
             }
             else if (color.equals(Color.YELLOW)) {
                 baseMove = ballPos + possibleMove + 39;
-                if (baseMove <= 75 && baseMove >= 72) {
+                if (baseMove <= 75 && baseMove >= 72 && ballPos < 32) {
                     possibleDestinations.add(baseMove);
                 }
             }
             else {
                 baseMove = ballPos + possibleMove + 27;
-                if (baseMove <= 79 && baseMove >= 76) {
+                if (baseMove <= 79 && baseMove >= 76 && ballPos < 48) {
                     possibleDestinations.add(baseMove);
                 }
             }
@@ -309,8 +309,6 @@ public class GameLogicService {
                 }
             }
 
-        // TODO: WHEN GOING INTO BASE
-
         return holesTraveled;
     }
 
@@ -396,7 +394,7 @@ public class GameLogicService {
     }
 
     public Boolean checkIfOnLastBasePosition(int ballPosition) {
-        List<Integer> lastPositions = new ArrayList<Integer>(List.of(67,71,75,79));
+        List<Integer> lastPositions = new ArrayList<>(List.of(67,71,75,79));
         return lastPositions.contains(ballPosition);
     }
 
@@ -584,7 +582,7 @@ public class GameLogicService {
     // Account for the case when move is made with 7 => player gets access to teammate's balls
     public List<Ball> getPlayerBalls (List<Ball> balls, List<Color> playerColors) {
 
-        List<Ball> playerBalls = new ArrayList<Ball>();
+        List<Ball> playerBalls = new ArrayList<>();
 
         for (Color color : playerColors) {
             for (Ball ball : balls) {

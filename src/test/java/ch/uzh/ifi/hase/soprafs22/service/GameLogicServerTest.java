@@ -21,6 +21,7 @@ public class GameLogicServerTest {
     private final Ball green1 = new Ball(Color.GREEN, 1);
     private final Ball green0 = new Ball(Color.GREEN, 0);
     private final Ball green14 = new Ball(Color.GREEN, 14);
+    private final Ball green15 = new Ball(Color.GREEN, 14);
     private final Ball green16 = new Ball(Color.GREEN, 16);
     private final Ball green80 = new Ball(Color.GREEN, 80);
     private final Ball green81 = new Ball(Color.GREEN, 81);
@@ -40,6 +41,7 @@ public class GameLogicServerTest {
     private final Ball red15 = new Ball(Color.RED, 15);
     private final Ball red16 = new Ball(Color.RED, 16);
     private final Ball red17 = new Ball(Color.RED, 17);
+    private final Ball red31 = new Ball(Color.RED, 31);
 
     private final Ball yellow88 = new Ball(Color.YELLOW, 88);
     private final Ball yellow89 = new Ball(Color.YELLOW, 89);
@@ -48,10 +50,12 @@ public class GameLogicServerTest {
     private final Ball yellow31 = new Ball(Color.YELLOW, 31);
     private final Ball yellow32 = new Ball(Color.YELLOW, 32);
     private final Ball yellow33 = new Ball(Color.YELLOW, 33);
+    private final Ball yellow47 = new Ball(Color.YELLOW, 47);
 
     private final Ball blue47 = new Ball(Color.BLUE, 47);
     private final Ball blue48 = new Ball(Color.BLUE, 48);
     private final Ball blue49 = new Ball(Color.BLUE, 49);
+    private final Ball blue63 = new Ball(Color.BLUE, 63);
     private final Ball blue92 = new Ball(Color.BLUE, 92);
     private final Ball blue93 = new Ball(Color.BLUE, 93);
     private final Ball blue94 = new Ball(Color.BLUE, 94);
@@ -88,10 +92,10 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green63, green14, red16));
 
-        Set<Integer> testPossibleMoves1 = new HashSet<>(Set.of(1,11));
+        Set<Integer> testPossibleMoves = new HashSet<>(Set.of(1,11));
 
-        assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayOnStarting(green14, balls, testPossibleMoves1));
-        assertEquals(Set.of(), gameLogicService.checkBallOnTheWayOnStarting(green63, balls, testPossibleMoves1));
+        assertEquals(Set.of(1), gameLogicService.checkBallOnTheWayOnStarting(green14, balls, testPossibleMoves));
+        assertEquals(Set.of(), gameLogicService.checkBallOnTheWayOnStarting(green63, balls, testPossibleMoves));
 
     }
 
@@ -122,7 +126,7 @@ public class GameLogicServerTest {
         assertEquals(Set.of(79,52), possibleDestinationsBLUE1);
         assertEquals(Set.of(65,66,67), possibleDestinationsGREENinBase);
 
-    Set<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(Set.of(1, 11), green0, Set.of());
+        Set<Integer> possibleDestinations1 = gameLogicService.getPossibleDestinations(Set.of(1, 11), green0, Set.of());
     Set<Integer> possibleDestinations2 = gameLogicService.getPossibleDestinations(Set.of(1, 11), green63, Set.of());
 
     Set<Integer> possibleDestinationsGREEN = gameLogicService.getPossibleDestinations(Set.of(1, 11, 100), green80, Set.of());
