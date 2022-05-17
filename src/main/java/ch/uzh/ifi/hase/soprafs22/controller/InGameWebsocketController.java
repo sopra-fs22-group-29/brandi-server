@@ -98,6 +98,27 @@ public class InGameWebsocketController {
         inGameWebsocketService.notifyAllOtherGameMembers("/client/player/left", game, principal.getName(), playerState);
     }
 
+    @MessageMapping("/websocket/{uuid}/pauseGame")
+    public void pauseGame(@DestinationVariable String uuid, Principal principal) throws Exception{
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+        game.pauseGame();
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/pauseGame", game, principal.getName(), game);
+
+    }
+    @MessageMapping("/websocket/{uuid}/surrender")
+    public void surrender(@DestinationVariable String uuid, Principal principal) throws Exception{
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+        game.endGame();
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/surrender", game, principal.getName(), game);
+
+    }
+
     @MessageMapping("/websocket/{uuid}/select/card")
     public void selectCard(@DestinationVariable String uuid, CardDTO card, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a card");
