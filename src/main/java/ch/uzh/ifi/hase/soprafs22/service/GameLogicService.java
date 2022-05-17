@@ -484,6 +484,7 @@ public class GameLogicService {
     public Set<Integer> checkBallOnTheWayInBase(Ball ball, Set<Ball> balls, Set<Integer> possibleDestinations) {
 
             Color color = ball.getColor();
+            int position = ball.getPosition();
 
             Set<Integer> tempDestinations = new HashSet<>(possibleDestinations);
             Set<Integer> toBeRemoved = new HashSet<>();
@@ -492,7 +493,7 @@ public class GameLogicService {
                 int pos = b.getPosition();
                 if (/* b.getColor() == color && */ b.checkBallInBase() && ball != b) {
                     for (int destination : tempDestinations) {
-                        if (destination >= pos) {
+                        if (destination >= pos && destination < position) {
                             toBeRemoved.add(destination);
                         }
                     }

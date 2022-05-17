@@ -1,24 +1,20 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Color;
-import ch.uzh.ifi.hase.soprafs22.constant.Rank;
-import ch.uzh.ifi.hase.soprafs22.entity.Ball;
-import ch.uzh.ifi.hase.soprafs22.entity.Game;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
+import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
 
 public class GameLogicServerTest {
     @Mock
