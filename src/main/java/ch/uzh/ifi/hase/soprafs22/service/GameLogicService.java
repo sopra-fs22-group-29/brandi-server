@@ -54,9 +54,6 @@ public class GameLogicService {
        
         else if (cardRank.equals(Rank.SEVEN)) {
             int holesTraveled = game.getHolesTravelled();
-            // special move num
-            // FIXME: Do we actually need this?
-            possibleMoves.add(107);
 
             for(int i = 1; i <= 7 - holesTraveled; i++){
                 possibleMoves.add(i);
