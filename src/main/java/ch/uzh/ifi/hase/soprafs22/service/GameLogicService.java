@@ -493,7 +493,7 @@ public class GameLogicService {
                 int pos = b.getPosition();
                 if (/* b.getColor() == color && */ b.checkBallInBase() && ball != b) {
                     for (int destination : tempDestinations) {
-                        if (destination >= pos && destination < position) {
+                        if (destination >= pos && position < pos) {
                             toBeRemoved.add(destination);
                         }
                     }
