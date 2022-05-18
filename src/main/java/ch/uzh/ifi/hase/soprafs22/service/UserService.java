@@ -136,12 +136,6 @@ public class UserService {
                   throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
               }
           }
-      // else{
-      //     String baseErrorMessage = "You are not allowed to update other users!";
-      //     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage));
-  
-      // }
-      
       
     }
     /**
