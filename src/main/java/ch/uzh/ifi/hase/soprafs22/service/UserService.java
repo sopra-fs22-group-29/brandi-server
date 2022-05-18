@@ -75,16 +75,24 @@ public class UserService {
         return newUser;
     }
 
-    public User updateUser(Long id, UserUpdateDTO userUpdateDTO, String updatingUsername) {
+    public User updateUser(Long id, User userInput, String updatingUsername) {
         User user = this.userRepository.findById(id).orElse(null);
 
         if(user == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User with id " + id + " does not exist.");
         } else if(user.getUsername() != updatingUsername) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change the birthday of other users than yourself.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to change information of other users than yourself.");
+        } 
+        checkIfUserCanBeUpdated(userInput, user);
+        if(userInput.getPassword() == ""){
+            user.setUsername(userInput.getUsername());
+        }
+        else{
+            user.setUsername(userInput.getUsername());
+            user.setPassword((new BCryptPasswordEncoder()).encode(userInput.getPassword()));
         }
 
-        userRepository.save(user);
+        user = userRepository.save(user);
         userRepository.flush();
 
         return user;
@@ -109,7 +117,27 @@ public class UserService {
                     String.format(baseErrorMessage, "username " + userByUsername,  "is"));
         }
     }
-
+    private void checkIfUserCanBeUpdated(User userToBeUpdated, User userInRepository) {
+        if (userInRepository == null){
+            String baseErrorMessage="User with Id %s not found";
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format(baseErrorMessage, userToBeUpdated.getId()));
+        }
+      
+          else if (userToBeUpdated.getUsername().equals("")){
+          String baseErrorMessage = "Username must not be empty!";
+          throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage    ));
+          }
+          else if(!userToBeUpdated.getUsername().equals(userInRepository.getUsername()))
+          {
+              User userByUsername = userRepository.findByUsername(userToBeUpdated.getUsername());
+  
+              String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be updated!";
+              if (userByUsername != null) {
+                  throw new ResponseStatusException(HttpStatus.CONFLICT, String.format(baseErrorMessage, "username", "is"));
+              }
+          }
+      
+    }
     /**
      * this is a helper method that will check if a user with the same username is
      * in the database

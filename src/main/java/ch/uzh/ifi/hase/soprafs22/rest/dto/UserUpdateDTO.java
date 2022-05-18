@@ -1,16 +1,24 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
-import java.util.Date;
-
 public class UserUpdateDTO {
 
-    private Date birthDate;
+   private String username;
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
+   private String password;
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
+   public String getUsername() {
+       return username;
+   }
+
+   public void setUsername(String username) {
+       this.username = username;
+   }
+
+   public String getPassword(){
+       return password;
+   }
+
+   public void setPassword(String password) {
+       this.password = password;
+   }
 }
