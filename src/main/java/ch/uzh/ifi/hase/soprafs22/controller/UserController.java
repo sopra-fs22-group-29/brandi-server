@@ -65,7 +65,6 @@ public class UserController {
         User updatedUser = userService.updateUser(Long.parseLong(id), userInput, userName);
 
         // update user
-        // User updatedUser = userService.updateUser(Long.parseLong(id), userUpdateDTO, userName);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
     }
