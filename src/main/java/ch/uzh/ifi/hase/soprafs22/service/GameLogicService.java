@@ -460,7 +460,7 @@ public class GameLogicService {
                             && getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                             toBeRemoved.add(possibleMove);
                     }
-                    else if (getHolesTravelled(destination%63, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
+                    else if (getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                         toBeRemoved.add(possibleMove);
                     }
                 }
