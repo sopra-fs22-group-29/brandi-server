@@ -85,8 +85,8 @@ public class GameLogicServerTest {
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63));
 
         // Game can be null because its only used for moves with a SEVEN
-        Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(null, cardRank1, balls, green0);
-        Set<Integer> possibleMoves2 = gameLogicService.getPossibleMoves(null, cardRank2, balls, green0);
+        Set<Integer> possibleMoves1 = GameLogicService.getPossibleMoves(null, cardRank1, balls, green0);
+        Set<Integer> possibleMoves2 = GameLogicService.getPossibleMoves(null, cardRank2, balls, green0);
 
         assertEquals(Set.of(1,11), possibleMoves1);
         assertEquals(Set.of(4,-4), possibleMoves2);

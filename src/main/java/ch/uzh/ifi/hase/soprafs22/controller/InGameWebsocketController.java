@@ -193,7 +193,7 @@ public class InGameWebsocketController {
 
         Ball ball = boardState.getBallById(ballId);
 
-        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(game, selectMarbleDTO.getRank(), balls, ball);
+        Set<Integer> possibleMoves = GameLogicService.getPossibleMoves(game, selectMarbleDTO.getRank(), balls, ball);
 
         Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball, balls);
 
