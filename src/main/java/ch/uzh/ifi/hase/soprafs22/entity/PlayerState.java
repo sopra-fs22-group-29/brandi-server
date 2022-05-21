@@ -47,6 +47,9 @@ public class PlayerState {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private PlayerHand playerHand;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Card exchangeCard;
+
     public PlayerState(){}
 
     public PlayerState(User player, Integer team, Color color, Boolean playerStatus, PlayerHand playerHand) {
@@ -56,6 +59,15 @@ public class PlayerState {
         this.playerStatus = playerStatus;
         this.playerHand = playerHand;
         this.color = color;
+        this.exchangeCard = null;
+    }
+
+    public Card getExchangeCard() {
+        return this.exchangeCard;
+    }
+
+    public void setExchangeCard(Card exchangeCard) {
+        this.exchangeCard = exchangeCard;
     }
 
     public Boolean getIsPlaying() {
@@ -109,7 +121,20 @@ public class PlayerState {
     }
 
     @JsonIgnore
+    public String getUsername(){
+        return this.getUsername();
+    }
+    
+    @JsonIgnore
     public Optional<Long> getCurrentGameId(){
         return this.player.getCurrentGameId();
+    }
+
+    public void removeCard(Card card){
+        this.playerHand.deleteCard(card);
+    }
+
+    public void addCard(Card card){
+        this.playerHand.addCard(card);
     }
 }

@@ -283,6 +283,32 @@ public class Game {
         return this.playerStates.get(this.activePlayer);
     }
 
+    /**
+     * Swap card with teammate
+     * @param user
+     * @param card
+     * @return New Card for user, null if still waiting for teammate
+     */
+    public Card exchangeCards(User user, Card card){
+        PlayerState userState = getPlayerState(user.getUsername());
+        PlayerState teammate = getTeammate(userState);
+
+        Card teamMateCard = teammate.getExchangeCard();
+
+        if(teamMateCard == null){
+            userState.setExchangeCard(card);
+            return null;
+        }
+
+        userState.removeCard(card);
+        userState.addCard(teamMateCard);
+
+        teammate.removeCard(teamMateCard);
+        teammate.addCard(card);
+
+        return teamMateCard;
+    }
+
     // return true if all players have no more cards
     public Boolean allPlayersFinished(){
         for(PlayerState playerstate: this.playerStates){
@@ -455,5 +481,24 @@ public class Game {
             }
         }
         return userColor;
+    }
+
+    @JsonIgnore
+    public PlayerState getTeammate(PlayerState user){
+        for(PlayerState state: this.playerStates){
+            if(!state.equals(user) && state.getTeam().equals(user.getTeam())){
+                return state;
+            }
+        }    
+        return null;
+    }
+
+    @JsonIgnore
+    public List<PlayerState> getPlayerStatesOfTeam(Integer team){
+        List<PlayerState> playerStatesOfTeam = new ArrayList<PlayerState>();
+        for(PlayerState state: this.playerStates){
+            if(state.getTeam().equals(team)) playerStatesOfTeam.add(state);
+        }
+        return playerStatesOfTeam;
     }
 }

@@ -78,66 +78,6 @@ public class InGameWebsocketController {
         inGameWebsocketService.notifyPlayersAfterMove(game, move, marblesSet);
     }
 
-    @MessageMapping("/websocket/{uuid}/join")
-    public void joinGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
-        System.out.println(principal.getName() + " just joined a game");
-        Game game = gameService.getGameByUuid(uuid);
-        if(game == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game to join not found by uuid");
-        }
-
-        PlayerState playerState = gameService.playerJoined(game, principal.getName());
-
-        // if(playerState == null) return;
-
-        // provide the new user with the current Game State
-        inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
-
-        // provide the new user with the his hand
-        inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), playerState.getPlayerHand());
-
-        // provide the user's updated information to all other members in the lobby
-        UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
-    }
-
-
-    @MessageMapping("/websocket/{uuid}/leave")
-    public void leaveGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
-        System.out.println(principal.getName() + " just left a game");
-        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
-        if(game == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
-        }
-
-        PlayerState playerState = gameService.playerLeft(game, principal.getName());
-
-        // provide the user's updated information to all other members in the lobby
-        UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/left", game, principal.getName(), playerState);
-    }
-
-    @MessageMapping("/websocket/{uuid}/pauseGame")
-    public void pauseGame(@DestinationVariable String uuid, Principal principal) throws Exception{
-        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
-        if(game == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
-        }
-        game.pauseGame();
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/pauseGame", game, principal.getName(), game);
-
-    }
-    @MessageMapping("/websocket/{uuid}/surrender")
-    public void surrender(@DestinationVariable String uuid, Principal principal) throws Exception{
-        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
-        if(game == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
-        }
-        game.endGame();
-        inGameWebsocketService.notifyAllOtherGameMembers("/client/surrender", game, principal.getName(), game);
-
-    }
-
     @MessageMapping("/websocket/{uuid}/select/card")
     public void selectCard(@DestinationVariable String uuid, CardDTO card, Principal principal) throws Exception {
         System.out.println(principal.getName() + " selected a card");
@@ -205,5 +145,78 @@ public class InGameWebsocketController {
 
         // provide the user with a list of marbles he could move
         inGameWebsocketService.notifySpecificUser("/client/highlight/holes", principal.getName(), selectMarbleResponseDTO);
+    }
+
+    @MessageMapping("/websocket/{uuid}/exchangeCard")
+    public void exchangeCards(@DestinationVariable String uuid, CardDTO card, Principal principal) {
+        Game game = gameService.getGameByUuid(uuid);
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game to join not found by uuid");
+        }
+
+        String username = principal.getName();
+        User user = userService.getUser(username);
+
+        inGameWebsocketService.exchangeCards(game, user, card);
+    }
+
+    @MessageMapping("/websocket/{uuid}/join")
+    public void joinGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
+        System.out.println(principal.getName() + " just joined a game");
+        Game game = gameService.getGameByUuid(uuid);
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game to join not found by uuid");
+        }
+
+        PlayerState playerState = gameService.playerJoined(game, principal.getName());
+
+        // if(playerState == null) return;
+
+        // provide the new user with the current Game State
+        inGameWebsocketService.notifySpecificUser("/client/state", principal.getName(), DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
+
+        // provide the new user with the his hand
+        inGameWebsocketService.notifySpecificUser("/client/cards", principal.getName(), playerState.getPlayerHand());
+
+        // provide the user's updated information to all other members in the lobby
+        UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
+    }
+
+
+    @MessageMapping("/websocket/{uuid}/leave")
+    public void leaveGameByUuid(@DestinationVariable String uuid, Principal principal) throws Exception {
+        System.out.println(principal.getName() + " just left a game");
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+
+        PlayerState playerState = gameService.playerLeft(game, principal.getName());
+
+        // provide the user's updated information to all other members in the lobby
+        UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/player/left", game, principal.getName(), playerState);
+    }
+
+    @MessageMapping("/websocket/{uuid}/pauseGame")
+    public void pauseGame(@DestinationVariable String uuid, Principal principal) throws Exception{
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+        game.pauseGame();
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/pauseGame", game, principal.getName(), game);
+
+    }
+    @MessageMapping("/websocket/{uuid}/surrender")
+    public void surrender(@DestinationVariable String uuid, Principal principal) throws Exception{
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        if(game == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
+        }
+        game.endGame();
+        inGameWebsocketService.notifyAllOtherGameMembers("/client/surrender", game, principal.getName(), game);
+
     }
 }

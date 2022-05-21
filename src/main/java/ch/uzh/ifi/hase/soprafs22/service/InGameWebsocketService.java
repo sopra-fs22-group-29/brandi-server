@@ -286,4 +286,18 @@ public class InGameWebsocketService {
         System.out.println("Can't use that card");
         return false;
     }
+
+    public void exchangeCards(Game game, User user, CardDTO cardDTO) {
+        Card oldCard = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+        Card newCard = game.exchangeCards(user, oldCard);
+
+        if(newCard == null) return;
+
+        // FIXME: Ugly
+        PlayerState teammate = game.getTeammate(game.getPlayerState(user.getUsername()));
+
+        simpMessagingTemplate.convertAndSendToUser(user.getUsername(), "client/cards/exchange", newCard);
+        simpMessagingTemplate.convertAndSendToUser(teammate.getUsername(), "client/cards/exchange", oldCard);
+    
+    }
 }
