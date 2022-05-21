@@ -289,8 +289,10 @@ public class InGameWebsocketService {
 
     public void exchangeCards(Game game, User user, CardDTO cardDTO) {
         Card oldCard = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+        
         Card newCard = game.exchangeCards(user, oldCard);
-
+        gameRepository.saveAndFlush(game);
+        
         if(newCard == null) return;
 
         // FIXME: Ugly
