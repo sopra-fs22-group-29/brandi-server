@@ -26,7 +26,7 @@ public class PlayerHand {
     /* Delete a card from playerHand, used when card is played */
     public void deleteCard(Card cardToDelete){
         for(Card card : this.activeCards){
-            if(card.getId().equals(cardToDelete.getId())/*  || card.getRank().equals(cardToDelete.getRank()) && card.getSuit().equals(cardToDelete.getSuit()) */){
+            if(/* card.getId().equals(cardToDelete.getId()) || */ card.getRank().equals(cardToDelete.getRank()) && card.getSuit().equals(cardToDelete.getSuit())){
                 this.activeCards.remove(card);
                 return;
             }
@@ -63,5 +63,13 @@ public class PlayerHand {
 
     public Boolean isEmpty(){
         return this.activeCards.isEmpty();
+    }
+
+    public void printAllCards(){
+        String out = "";
+        for(Card card: this.activeCards){
+            out += card.getRank() + " of " + card.getSuit() + ",  ";
+        }
+        System.out.println(out);
     }
 }

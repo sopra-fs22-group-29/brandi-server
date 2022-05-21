@@ -153,9 +153,8 @@ public class InGameWebsocketController {
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game to join not found by uuid");
         }
-
-        String username = principal.getName();
-        User user = userService.getUser(username);
+        
+        User user = userService.getUser(principal.getName());
 
         inGameWebsocketService.exchangeCards(game, user, card);
     }

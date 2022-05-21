@@ -297,6 +297,7 @@ public class Game {
 
         if(teamMateCard == null){
             userState.setExchangeCard(card);
+            System.out.println("Waiting for teammate to give card");
             return null;
         }
 
@@ -305,6 +306,8 @@ public class Game {
 
         teammate.removeCard(teamMateCard);
         teammate.addCard(card);
+
+        System.out.println(user.getUsername() + " and " + teammate.getUsername() + " exchanged cards successfully");
 
         return teamMateCard;
     }

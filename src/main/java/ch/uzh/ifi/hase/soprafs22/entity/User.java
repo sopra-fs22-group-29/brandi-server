@@ -98,6 +98,8 @@ public class User implements Serializable {
     }
 
     public Optional<Game> getGameById(Long id){
+        if(this.games == null) return Optional.empty();
+
         for(Game game : this.games){
             if(game.getId() == id){return Optional.of(game);}
         }
@@ -117,6 +119,8 @@ public class User implements Serializable {
     */
     @JsonIgnore
     public Optional<Long> getCurrentGameId(){
+        if(this.games == null) return Optional.empty();
+        
         for(Game game : this.games){
             if(game.getGameOn()){
                 return Optional.of(game.getId());

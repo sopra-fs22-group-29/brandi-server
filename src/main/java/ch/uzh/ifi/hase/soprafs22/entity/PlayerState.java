@@ -122,9 +122,9 @@ public class PlayerState {
 
     @JsonIgnore
     public String getUsername(){
-        return this.getUsername();
+        return this.player.getUsername();
     }
-    
+
     @JsonIgnore
     public Optional<Long> getCurrentGameId(){
         return this.player.getCurrentGameId();
