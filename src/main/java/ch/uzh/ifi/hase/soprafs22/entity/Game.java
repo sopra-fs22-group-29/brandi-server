@@ -309,6 +309,8 @@ public class Game {
 
         System.out.println(user.getUsername() + " and " + teammate.getUsername() + " exchanged cards successfully");
 
+        userState.setExchangeCard(null);
+        teammate.setExchangeCard(null);
         return teamMateCard;
     }
 
