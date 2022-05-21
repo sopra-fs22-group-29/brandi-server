@@ -1,11 +1,17 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.IdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
+import ch.uzh.ifi.hase.soprafs22.service.UserService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -28,9 +36,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class GameController {
 
     private final GameService gameService;
+    private GameLogicService gameLogicService;
+    private UserService userService;
 
-    GameController(GameService gameService) {
+    GameController(GameService gameService, UserService userService, GameLogicService gameLogicService) {
         this.gameService = gameService;
+        this.gameLogicService = gameLogicService;
+        this.userService = userService;
     }
 
     @PostMapping("/game")
@@ -83,6 +95,29 @@ public class GameController {
     @ResponseBody
     public Color getColorOfUserInGame(@PathVariable(name = "uuid") String uuid, @RequestBody IdDTO id){
         return gameService.getColorOfUserInGame(uuid, id.getId());
-
     }
+
+    @GetMapping("/game/{uuid}/movePossible")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Boolean getMovePossible(@PathVariable(name = "uuid") String uuid, Principal principal){
+        String username = principal.getName();
+        Game game = gameService.getGameByUuidOfUser(uuid, principal.getName());
+        User user = userService.getUser(username);
+
+        // If move possible with any of the cards in players hand -> return true
+        for(Card card: game.getPlayerState(username).getPlayerHand().getActiveCards()){
+            Set<Ball> balls = game.getBoardstate().getBalls();
+            Color userColor = gameService.getColorOfUserInGame(uuid, user.getId());
+            Color teamMateColor = game.getColorOfTeammate(userColor);
+
+            if(!gameLogicService.highlightBalls(game, card.getRank(), balls, userColor, teamMateColor).isEmpty()){
+                // Move possible with that card
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
