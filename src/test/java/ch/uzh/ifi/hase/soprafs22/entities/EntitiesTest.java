@@ -150,15 +150,12 @@ public class EntitiesTest {
 
 
         for(User user: users){
-            // Give first card in hand as exchangeCard
+            // Add copy of playerHand to List
             PlayerHand handBefore = new PlayerHand();
-            handBefore.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));
-            
-            System.out.println("Hand before: ");
-            game.getPlayerState(user.getUsername()).getPlayerHand().printAllCards();
-            
+            handBefore.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));   
             playerHandsBefore.add(handBefore);
 
+            // Give first card in hand as exchangeCard
             Card card = handBefore.getActiveCards().iterator().next();
             System.out.println(card.getRank() + " of " + card.getSuit());
 
@@ -166,16 +163,15 @@ public class EntitiesTest {
         }
 
         for(User user: users){
+            // Add copy of playerHand after cardExchanges to List
             PlayerHand hand = new PlayerHand();
             hand.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));
             playerHandsAfter.add(hand);
-
-            System.out.println("Hand after: ");
-            game.getPlayerState(user.getUsername()).getPlayerHand().printAllCards();
         }
 
         assertEquals(playerHandsBefore.size(), playerHandsAfter.size());
 
+        // Assert playerHand has changed for every player
         for(int i = 0; i < playerHandsBefore.size(); i++){
             playerHandsBefore.get(i).printAllCards();
             playerHandsAfter.get(i).printAllCards();
