@@ -5,9 +5,10 @@ import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.parameters.P;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,6 +129,58 @@ public class EntitiesTest {
         playerState.drawCards(cards);
         assertEquals(playerHand, playerState.getPlayerHand());
 
+    }
+
+    @Test
+    public void GameExchangeCardsTest() {
+        User player1 = new User("username", 1L, "uuid", "password");
+        User player2 = new User("username2", 2L, "uuid2", "password2");
+        User player3 = new User("username3", 3L, "uuid3", "password3");
+        User player4 = new User("username4", 4L, "uuid4", "password4");
+
+        List<User> users = List.of(player1, player2, player3, player4);
+
+        Game game = new Game(player1);
+        game.addPlayer(player2);
+        game.addPlayer(player3);
+        game.addPlayer(player4);
+
+        List<PlayerHand> playerHandsBefore = new ArrayList<>();
+        List<PlayerHand> playerHandsAfter = new ArrayList<>();
+
+
+        for(User user: users){
+            // Give first card in hand as exchangeCard
+            PlayerHand handBefore = new PlayerHand();
+            handBefore.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));
+            
+            System.out.println("Hand before: ");
+            game.getPlayerState(user.getUsername()).getPlayerHand().printAllCards();
+            
+            playerHandsBefore.add(handBefore);
+
+            Card card = handBefore.getActiveCards().iterator().next();
+            System.out.println(card.getRank() + " of " + card.getSuit());
+
+            game.exchangeCards(user, card);
+        }
+
+        for(User user: users){
+            PlayerHand hand = new PlayerHand();
+            hand.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));
+            playerHandsAfter.add(hand);
+
+            System.out.println("Hand after: ");
+            game.getPlayerState(user.getUsername()).getPlayerHand().printAllCards();
+        }
+
+        assertEquals(playerHandsBefore.size(), playerHandsAfter.size());
+
+        for(int i = 0; i < playerHandsBefore.size(); i++){
+            playerHandsBefore.get(i).printAllCards();
+            playerHandsAfter.get(i).printAllCards();
+            assertNotEquals(playerHandsBefore.get(i).getActiveCards(), playerHandsAfter.get(i).getActiveCards());
+        }
     }
 
 }

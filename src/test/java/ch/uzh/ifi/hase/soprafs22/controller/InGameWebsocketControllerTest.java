@@ -152,6 +152,12 @@ class InGameWebsocketControllerTest {
         stompSession.send("/app/websocket/" + gameUuid + "/leave", null);
     }
 
+    @Test
+    void exchangeCards() {
+        webSocketStompClient.setMessageConverter(new SimpleMessageConverter());
+        stompSession.send("/app/websocket/" + gameUuid + "/exchangeCard", kingCard.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
 
     private void initializeUsers() {
         System.out.println("initialize users");
