@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 
 
@@ -50,13 +53,29 @@ public class InGameWebsocketController {
         String username = principal.getName();
         Game game = gameService.getGameByUuidOfUser(uuid, username);
 
+        if(!inGameWebsocketService.checkCanUseCard(game, move.getPlayedCard())) return;
+
+        if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
+            Ball ball = game.getBoardstate().getBallById(move.getBallId());
+            // TODO: SHould withDest be true or false??
+            List<Integer> holesTraveled = GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), false);
+            game = inGameWebsocketService.addHolesTravelled(game, holesTraveled.size());
+        }
+
         // verify move validity, make move in game, add Player details to move for returning
         move = inGameWebsocketService.verifyMove(game, move, username);
 
         // move == null means it wasnt users turn or no cards left, simply ignore 
         if(move == null) return;
 
-        inGameWebsocketService.notifyPlayersAfterMove(game, move);
+        // Need to pass marblesset if card played was a seven
+        Set<Ball> balls = game.getBoardstate().getBalls();
+        Color userColor = game.getPlayerState(username).getColor();
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, move.getPlayedCard().getRank(), balls, userColor, game.getColorOfTeammate(userColor));
+
+        //Not great to fetch again
+        game = gameService.getGameByUuidOfUser(uuid, username);
+        inGameWebsocketService.notifyPlayersAfterMove(game, move, marblesSet);
     }
 
     @MessageMapping("/websocket/{uuid}/join")
@@ -130,7 +149,9 @@ public class InGameWebsocketController {
         
         String username = principal.getName();
         Set<Ball> balls = game.getBoardstate().getBalls();
-        Set<Integer> marblesSet = gameLogicService.highlightBalls(card.getRank(), balls, game.getPlayerState(username).getColor());
+        Color userColor = game.getPlayerState(username).getColor();
+
+        Set<Integer> marblesSet = gameLogicService.highlightBalls(game, card.getRank(), balls, userColor, game.getColorOfTeammate(userColor));
 
         Boolean movePossible = inGameWebsocketService.selectCard(game, card, username, marblesSet);
         if(movePossible){
@@ -140,7 +161,7 @@ public class InGameWebsocketController {
         // If no playable card, delete cards and move to next player
         PlayerState playerState = game.getPlayerState(username);
         for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
-            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(cardInHand.getRank(), balls, playerState.getColor());
+            Set<Integer> possibleMarbles = gameLogicService.highlightBalls(game, cardInHand.getRank(), balls, userColor, game.getColorOfTeammate(userColor));
             //TODO: Could send list of playable cards to user here
             if(!possibleMarbles.isEmpty()){
                 // User has other card to make a move, ignore 
@@ -172,7 +193,7 @@ public class InGameWebsocketController {
 
         Ball ball = boardState.getBallById(ballId);
 
-        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(selectMarbleDTO.getRank(), balls, ball);
+        Set<Integer> possibleMoves = GameLogicService.getPossibleMoves(game, selectMarbleDTO.getRank(), balls, ball);
 
         Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball, balls);
 

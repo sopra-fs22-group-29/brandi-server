@@ -4,6 +4,8 @@ import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,16 +15,17 @@ import java.util.*;
 @Transactional
 public class GameLogicService {
 
-    public Set<Integer> highlightBalls (Rank cardRank, Set<Ball> balls, Color playerColor) {
+    public Set<Integer> highlightBalls (Game game, Rank cardRank, Set<Ball> balls, Color playerColor, Color teamMateColor) {
         Set<Integer> highlightedBalls = new HashSet<>();
 
         for (Ball ball : balls) {
 
-            Set<Integer> possibleMoves = getPossibleMoves(cardRank, balls, ball);
+            Set<Integer> possibleMoves = getPossibleMoves(game, cardRank, balls, ball);
             Set<Integer> possibleDestinations = getPossibleDestinations(possibleMoves, ball, balls);
 
             int ballPos = ball.getPosition();
-            if (ball.getColor().equals(playerColor)) {
+            Color ballColor = ball.getColor();
+            if (ballColor.equals(playerColor)  || (cardRank.equals(Rank.SEVEN) && ballColor.equals(teamMateColor))) {
                 if (!possibleDestinations.isEmpty()) {highlightedBalls.add(ballPos);}
             }
         }
@@ -30,8 +33,16 @@ public class GameLogicService {
         return highlightedBalls;
     }
 
-    public Set<Integer> getPossibleMoves(Rank cardRank, Set<Ball> balls, Ball ball) {
-        Set<Integer> possibleMoves = new HashSet<>();
+    /**
+     * 
+     * @param game Needed for moves with a SEVEN
+     * @param cardRank
+     * @param balls
+     * @param ball to move with
+     * @return Set<Integer> of possible moves with ball relative to ball position
+     */
+    public static Set<Integer> getPossibleMoves(Game game, Rank cardRank, Set<Ball> balls, Ball ball) {
+        Set<Integer> possibleMoves = new HashSet<Integer>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
             possibleMoves.add(BoardState.normalCards.get(cardRank));
@@ -40,21 +51,13 @@ public class GameLogicService {
             possibleMoves.add(4);
             possibleMoves.add(-4);
         }
-        // TODO: implement cooperation with team member
-        // and killing on the way
-        // probably just a special number for the move
-        // which then will be processed as for loop of 1 distance moves
+       
         else if (cardRank.equals(Rank.SEVEN)) {
-            // special move num
-            possibleMoves.add(107);
+            int holesTraveled = game.getHolesTravelled();
 
-            possibleMoves.add(1);
-            possibleMoves.add(2);
-            possibleMoves.add(3);
-            possibleMoves.add(4);
-            possibleMoves.add(5);
-            possibleMoves.add(6);
-            possibleMoves.add(7);
+            for(int i = 1; i <= 7 - holesTraveled; i++){
+                possibleMoves.add(i);
+            }
         }
         else if (cardRank.equals(Rank.KING)) {
             // MOVE BY 13 OR INVOKE A BALL FROM HOME
@@ -180,6 +183,7 @@ public class GameLogicService {
                     if (greenMove <= 67 && greenMove >= 64) {
                         possibleDestinations.add(greenMove);
                     }
+
                 }
                 else {
                     if (baseMove <= 67 && baseMove >= 64 ) {
@@ -317,7 +321,7 @@ public class GameLogicService {
         return holesTraveled;
     }
 
-    public static void ballBackToHome(Ball ball, Set<Ball> balls) {
+    public static Integer ballBackToHome(Ball ball, Set<Ball> balls) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             ball.setPosition(getFreeHomeHoles(Color.GREEN, balls).stream().findAny().get());
@@ -331,6 +335,8 @@ public class GameLogicService {
         else {
             ball.setPosition(getFreeHomeHoles(Color.BLUE, balls).stream().findAny().get());
         }
+
+        return ball.getPosition();
     }
 
     public static Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {
@@ -365,7 +371,7 @@ public class GameLogicService {
         }
     }
 
-    public Set<Integer> getStartPosition(Ball ball) {
+    public static Set<Integer> getStartPosition(Ball ball) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             return Set.of(0);
@@ -382,7 +388,7 @@ public class GameLogicService {
     }
 
 
-    public int getBaseEndPosition(Ball ball) {
+    public static int getBaseEndPosition(Ball ball) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             return 67;
@@ -403,7 +409,7 @@ public class GameLogicService {
         return lastPositions.contains(ballPosition);
     }
 
-    public Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
+    public static Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
 
         Set<Integer> strippedMoves = new HashSet<>(possibleMoves);
 
@@ -425,11 +431,11 @@ public class GameLogicService {
         return strippedMoves;
     }
 
-    public int maximumMoveInBase(Ball ball) {
+    public static int maximumMoveInBase(Ball ball) {
         return getBaseEndPosition(ball) - ball.getPosition();
     }
 
-    public Set<Integer> checkBallOnTheWayOnStarting(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+    public static Set<Integer> checkBallOnTheWayOnStarting(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
@@ -454,7 +460,7 @@ public class GameLogicService {
                             && getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                             toBeRemoved.add(possibleMove);
                     }
-                    else if (getHolesTravelled(destination%63, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
+                    else if (getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                         toBeRemoved.add(possibleMove);
                     }
                 }
@@ -485,7 +491,7 @@ public class GameLogicService {
 
             for (Ball b: balls) {
                 int pos = b.getPosition();
-                if (b.getColor() == color && b.checkBallInBase() && ball != b) {
+                if (/* b.getColor() == color && */ b.checkBallInBase() && ball != b) {
                     for (int destination : tempDestinations) {
                         if (destination >= pos) {
                             toBeRemoved.add(destination);
@@ -543,7 +549,7 @@ public class GameLogicService {
     // 2 IF CAN GO OUT OF HOME,
     // 1 IF START IS OCCUPIED,
     // 0 IF BALL NOT IN HOME
-    public int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
+    public static int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
 
         Color color = ball.getColor();
 

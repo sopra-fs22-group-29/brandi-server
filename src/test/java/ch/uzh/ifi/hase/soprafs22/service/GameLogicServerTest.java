@@ -3,6 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -67,10 +70,11 @@ public class GameLogicServerTest {
     public void cardChosen_validBalls() {
         Rank cardRank = Rank.ACE;
         Color playerColor = Color.GREEN;
+        Color teammateColor = Color.BLUE;
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63, green67));
 
-        assertEquals(Set.of(1, 0, 64, 14, 16), gameLogicService.highlightBalls(cardRank, balls, playerColor));
+        assertEquals(Set.of(1, 0, 64, 14, 16), gameLogicService.highlightBalls(new Game(), cardRank, balls, playerColor, teammateColor));
     }
 
     @Test
@@ -80,8 +84,9 @@ public class GameLogicServerTest {
 
         Set<Ball> balls = new HashSet<>(Set.of(green1, green0, green64, green14, green16, green63));
 
-        Set<Integer> possibleMoves1 = gameLogicService.getPossibleMoves(cardRank1, balls, green0);
-        Set<Integer> possibleMoves2 = gameLogicService.getPossibleMoves(cardRank2, balls, green0);
+        // Game can be null because its only used for moves with a SEVEN
+        Set<Integer> possibleMoves1 = GameLogicService.getPossibleMoves(null, cardRank1, balls, green0);
+        Set<Integer> possibleMoves2 = GameLogicService.getPossibleMoves(null, cardRank2, balls, green0);
 
         assertEquals(Set.of(1,11), possibleMoves1);
         assertEquals(Set.of(4,-4), possibleMoves2);

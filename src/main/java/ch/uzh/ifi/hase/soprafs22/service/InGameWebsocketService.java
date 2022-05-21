@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
@@ -9,22 +10,19 @@ import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,12 +50,8 @@ public class InGameWebsocketService {
         game.getPlayerStates().forEach((playerState) -> {
             sentTo.add(playerState.getPlayer().getUsername());
         });
-//        System.out.println("created sendTo list");
-//        System.out.println(sentTo);
 
         sentTo.forEach((send) -> {
-//            String msg = send + " is getting a notification from " + principal.getName();
-//            System.out.println(msg);
             simpMessagingTemplate.convertAndSendToUser(send, route, payload);
         });
     }
@@ -102,6 +96,8 @@ public class InGameWebsocketService {
             return null;
         }
 
+        if(!this.checkCanUseCard(game, move.getPlayedCard())) return null;
+
         move.setUser(user);
         // Actually make the move and persist it
         game.makeMove(move);
@@ -112,16 +108,16 @@ public class InGameWebsocketService {
         return move;
     }
     
-    public void notifyPlayersAfterMove(Game game, Move move) {
+    public void notifyPlayersAfterMove(Game game, Move move, Set<Integer> marblesSet) {
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
         String username = move.getUser().getUsername();
 
         this.notifyAllGameMembers("/client/move", game, moveDTO); 
 
-        
-
         PlayerState nextUser = game.getNextTurn();
-        if(nextUser == null){ // No user can play any cards anymore -> Start new round
+
+        // No user can play any cards anymore -> Start new round
+        if(nextUser == null){ 
             game.startNewRound();
             nextUser = game.getNextTurn();
             game = gameRepository.saveAndFlush(game);
@@ -129,9 +125,25 @@ public class InGameWebsocketService {
                 // Send new Cards to all users
                 this.notifySpecificUser("/client/cards", playerState.getPlayer().getUsername(), playerState.getPlayerHand());
                 // Send next user to all users
+                //TODO: should maybe be moved to outside of loop
                 this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
             }
-        } else{
+        // User can go again (SEVEN), send marbles to make a move with
+        } else if(move.getUser().getId().equals(nextUser.getPlayer().getId())
+                && game.getLastCardPlayed() != null 
+                && game.getLastCardPlayed().getId().equals(move.getCardId())){
+            
+            int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
+
+            HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
+            highlightMarblesDTO.setIndex(move.getIndex());
+            highlightMarblesDTO.setMarbles(marbles);
+
+            // provide the user with a list of marbles he could move
+            this.notifySpecificUser("/client/highlight/marbles", username, highlightMarblesDTO);
+            
+        // Normal case: User made a move, nextUser can now make a move
+        }  else {
             // Send next user to all users, send updated cards to user that moved
             this.notifyAllGameMembers("/client/nextPlayer", game, nextUser.getPlayer());
             PlayerState state = game.getPlayerState(username);
@@ -169,7 +181,10 @@ public class InGameWebsocketService {
         return cards.isEmpty();
     }
 
-    public Boolean selectCard(Game game, CardDTO card, String username, Set<Integer> marblesSet){
+    public Boolean selectCard(Game game, CardDTO cardDTO, String username, Set<Integer> marblesSet){
+        Card card = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+        if(!this.checkCanUseCard(game, card)) return true;
+
         PlayerState playerState = game.getPlayerState(username);
 
         // choose marbles adequately to chosen card
@@ -182,13 +197,26 @@ public class InGameWebsocketService {
         if(marblesSet.isEmpty()){
             return false;
         }
-        // check marblesset empty
-        //if so, then check all cards
-        // notify next
+        
+        if(card.getRank().equals(Rank.SEVEN)){
+            // Sum max move with each marble that user can move with
+            // If less than 7 -> User will not be able to move 7 holes -> Isn't allowed to use that card
+            Integer allPossibleMovesAdded = 0;
+            for(Integer ballPos: marblesSet){
+                Ball ball = game.getBoardstate().getBallByPosition(ballPos);
+                Set<Integer> possibleMoves =  GameLogicService.getPossibleMoves(game, card.getRank(), balls, ball);
+
+                Integer longestMoveWithBall = Collections.max(possibleMoves);
+                allPossibleMovesAdded += longestMoveWithBall;
+            }
+            if(allPossibleMovesAdded < 7) return false;
+        }
+        
+
         int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
         HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();
-        highlightMarblesDTO.setIndex(card.getIndex());
+        highlightMarblesDTO.setIndex(cardDTO.getIndex());
         highlightMarblesDTO.setMarbles(marbles);
 
         // provide the user with a list of marbles he could move
@@ -232,5 +260,30 @@ public class InGameWebsocketService {
         game.surrenderCards(username);
         gameRepository.saveAndFlush(game);
         return game;
+    }
+
+    public Game addHolesTravelled(Game game, int holesTravelled) {
+        game.setHolesTravelled(game.getHolesTravelled() + holesTravelled);
+        game = gameRepository.saveAndFlush(game);
+        return game;
+    }
+
+    public Boolean checkCanUseCard(Game game, Card playedCard){
+        Card lastCard = game.getLastCardPlayed();
+
+        // Last move was by a different person, lastCardPlayed was reset after move
+        if(lastCard == null) return true;
+        // Trying to use different card from last move
+        if(playedCard.getId() != null && !lastCard.getId().equals(playedCard.getId())){
+            System.out.println(String.format("Cant use that card: LastCardPlayed = %s of %s, your card = %s of %s",
+                                 lastCard.getRank(), lastCard.getSuit(), playedCard.getRank(), playedCard.getSuit()));
+            return false;
+        }
+        // Card id not sent with request, need to check manually
+        if(lastCard.getRank().equals(Rank.SEVEN) && playedCard.getRank().equals(Rank.SEVEN)){
+            return true;
+        }
+        System.out.println("Can't use that card");
+        return false;
     }
 }

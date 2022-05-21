@@ -2,9 +2,11 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Optional;
 import java.util.Set;
@@ -15,6 +17,7 @@ import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
+import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +61,13 @@ public class Game {
 
     private Integer activePlayer;
 
+    // Needed for SEVEN
+    private Integer holesTravelled;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Card_id")
+    private Card lastCardPlayed;
+
     public Game() {}
 
     public Game(User player) {
@@ -72,6 +82,8 @@ public class Game {
         this.initBoardState();
         this.uuid = UUID.randomUUID().toString();
         this.activePlayer = 0;
+        this.holesTravelled = 0;
+        this.lastCardPlayed = null;
     }
 
     /* Create balls for each player, store in boardstate */
@@ -97,15 +109,19 @@ public class Game {
     /* Create PlayerState for every player with 6 cards in playerHand, assign team and color randomly */
     private void initPlayerState(User player){
         PlayerHand playerHand = new PlayerHand();
-        
-
         playerHand.drawCards(this.deck.drawCards(6));
 
-        // Team assigned to user by order of joining, users join teams alternatingly
-        Integer team = this.playerStates.size() % 2;
+        //TODO: Should probably be moved elsewhere
+        Map<Color, Integer> ColorToTeam = Map.of(
+            Color.GREEN, 0,
+            Color.BLUE, 1,
+            Color.RED, 1,
+            Color.YELLOW, 0
+        );
         // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
         Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
 
+        Integer team = ColorToTeam.get(userColor);
         this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
@@ -176,8 +192,15 @@ public class Game {
             playerState.drawCards(this.deck.drawCards(numCardsToPlay));
         }
         this.activePlayer = 0;
+        this.holesTravelled = 0;
+        this.lastCardPlayed = null;
     }
 
+    /**
+     * Need to call setHolesTravelled before making move
+     * @param move
+     * @return Boolean moveExecuted
+     */
     public Boolean makeMove(Move move){
         Boolean moveExecuted = false;
 
@@ -190,9 +213,16 @@ public class Game {
         }
         if(ball == null) return false;
 
-        // Remove played card from hand
-        PlayerHand hand = this.getNextTurn().getPlayerHand();
-        hand.deleteCard(move.getPlayedCard());
+        if(this.holesTravelled.equals(0) | this.holesTravelled.equals(7)){
+            // Remove played card from hand
+            PlayerHand hand = this.getNextTurn().getPlayerHand();
+            hand.deleteCard(move.getPlayedCard());
+            this.nextPlayer();
+        } else if(this.holesTravelled < 7) {
+            this.lastCardPlayed = move.getPlayedCard();
+        } else {
+            System.out.println("game.holestravelled > 7, this should never happen");
+        }
 
         // If ball at destination then move it back to home
         Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
@@ -211,14 +241,29 @@ public class Game {
 
         move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
 
+        // Move balls travelled over with a seven back to base
+        if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
+            for(int position: move.getHolesTravelled()){
+                Ball ballToEliminate = boardstate.getBallByPosition(position);
+                if(ballToEliminate != null && !ballToEliminate.getId().equals(move.getBallId())){
+                    Integer newPosition = GameLogicService.ballBackToHome(ballToEliminate,this.boardstate.getBalls());
+                    move.addBallIdsEliminated(ballToEliminate.getId());
+                    move.addNewPositions(newPosition);
+                    System.out.println("Added ball" + ballToEliminate.getId() + "to list of balls to eliminate");
+                }
+            }
+        }
+
         //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
-
-        this.nextPlayer();
         return moveExecuted;        
     }
 
     private void nextPlayer(){
+        // Reset data used for moving with a 7
+        this.holesTravelled = 0;
+        this.lastCardPlayed = null;
+
         // Increase as long as activeplayer has no cards
         for(int i = 0; i < 4; i++){
             this.playerStates.get(this.activePlayer).setIsPlaying(false);
@@ -228,6 +273,8 @@ public class Game {
                 return;
             }
         }
+
+        // Means no user can play anymore
         this.activePlayer = null;
     }
 
@@ -347,8 +394,17 @@ public class Game {
         this.deck = deck;
     }
 
+    public Integer getHolesTravelled() {
+        return this.holesTravelled;
+    }
+
+    public void setHolesTravelled(Integer holesTravelled) {
+        this.holesTravelled = holesTravelled;
+    }
+
     public PlayerState getPlayerState(String playerName) {
         PlayerState state = null;
+
         for (PlayerState player : this.playerStates){
             if(player.getPlayer().getUsername().equals(playerName)) {
                 return player;
@@ -357,6 +413,13 @@ public class Game {
         return null;
     }
 
+    public Card getLastCardPlayed() {
+        return this.lastCardPlayed;
+    }
+
+    public void setLastCardPlayed(Card lastCardPlayed) {
+        this.lastCardPlayed = lastCardPlayed;
+    }
 
     @JsonIgnore
     public Optional<Color> getUserColorById(Long id){
@@ -372,5 +435,25 @@ public class Game {
         PlayerState playerState = this.getPlayerState(username);
         playerState.getPlayerHand().setActiveCards(new HashSet<>());
         this.nextPlayer();
+    }
+
+    @JsonIgnore
+    public Color getColorOfTeammate(Color userColor){
+        PlayerState user = null;
+        for(PlayerState state: this.playerStates){
+            if(state.getColor().equals(userColor)){
+                user = state;
+                break;
+            }
+        }
+
+        if(user == null) return userColor;
+        Integer userTeam = user.getTeam();
+        for(PlayerState state: this.playerStates){
+            if(state.getTeam().equals(userTeam) && !state.equals(user)){
+                return state.getColor();
+            }
+        }
+        return userColor;
     }
 }
