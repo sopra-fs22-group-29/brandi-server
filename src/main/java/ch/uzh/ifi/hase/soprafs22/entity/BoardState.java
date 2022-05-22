@@ -37,7 +37,6 @@ public class BoardState {
             Rank.EIGHT, 8,
             Rank.NINE, 9,
             Rank.TEN, 10,
-//            Rank.JACK, 11,
             Rank.QUEEN, 12);
 
     // Special Cards: FOUR, SEVEN, JACK, KING, ACE, JOKER
