@@ -65,11 +65,11 @@ public class PlayerHand {
         return this.activeCards.isEmpty();
     }
 
-    public void printAllCards(){
-        String out = "";
+    public String toString(String prefix){
+        String out = (prefix == null) ? "" : prefix;
         for(Card card: this.activeCards){
             out += card.getRank() + " of " + card.getSuit() + ",  ";
         }
-        System.out.println(out);
+        return out;
     }
 }

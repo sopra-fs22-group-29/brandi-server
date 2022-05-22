@@ -173,8 +173,10 @@ public class EntitiesTest {
 
         // Assert playerHand has changed for every player
         for(int i = 0; i < playerHandsBefore.size(); i++){
-            playerHandsBefore.get(i).printAllCards();
-            playerHandsAfter.get(i).printAllCards();
+            System.out.println("Hand of player " + i + ":");
+            String before = playerHandsBefore.get(i).toString("\tBefore: ");
+            String after = playerHandsAfter.get(i).toString("\n\t After: ");
+            System.out.println(before + after);
             assertNotEquals(playerHandsBefore.get(i).getActiveCards(), playerHandsAfter.get(i).getActiveCards());
         }
     }
