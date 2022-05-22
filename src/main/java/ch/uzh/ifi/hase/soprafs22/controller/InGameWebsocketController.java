@@ -215,7 +215,10 @@ public class InGameWebsocketController {
         Color userColor = game.getPlayerState(username).getColor();
         Color teammateColor = game.getColorOfTeammate(userColor);
         PlayerState playerState = game.getPlayerState(username);
-
+        if(playerState.getPlayerHand().getActiveCards().isEmpty()){
+            return true;
+        }
+        else{
         for(Card cardInHand: playerState.getPlayerHand().getActiveCards()){
             Set<Integer> possibleMarbles = gameLogicService.highlightBalls(game, cardInHand.getRank(), balls, userColor, teammateColor);
             //TODO: Could send list of playable cards to user here
@@ -225,5 +228,6 @@ public class InGameWebsocketController {
             }
         }
         return false;
+        }
     }
 }
