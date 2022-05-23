@@ -5,9 +5,10 @@ import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.parameters.P;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,6 +129,55 @@ public class EntitiesTest {
         playerState.drawCards(cards);
         assertEquals(playerHand, playerState.getPlayerHand());
 
+    }
+
+    @Test
+    public void GameExchangeCardsTest() {
+        User player1 = new User("username", 1L, "uuid", "password");
+        User player2 = new User("username2", 2L, "uuid2", "password2");
+        User player3 = new User("username3", 3L, "uuid3", "password3");
+        User player4 = new User("username4", 4L, "uuid4", "password4");
+
+        List<User> users = List.of(player1, player2, player3, player4);
+
+        Game game = new Game(player1);
+        game.addPlayer(player2);
+        game.addPlayer(player3);
+        game.addPlayer(player4);
+
+        List<PlayerHand> playerHandsBefore = new ArrayList<>();
+        List<PlayerHand> playerHandsAfter = new ArrayList<>();
+
+
+        for(User user: users){
+            // Add copy of playerHand to List
+            PlayerHand handBefore = new PlayerHand();
+            handBefore.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));   
+            playerHandsBefore.add(handBefore);
+
+            // Give first card in hand as exchangeCard
+            Card card = handBefore.getActiveCards().iterator().next();
+
+            game.exchangeCards(user, card);
+        }
+
+        for(User user: users){
+            // Add copy of playerHand after cardExchanges to List
+            PlayerHand hand = new PlayerHand();
+            hand.drawCards(Set.copyOf(game.getPlayerState(user.getUsername()).getPlayerHand().getActiveCards()));
+            playerHandsAfter.add(hand);
+        }
+
+        assertEquals(playerHandsBefore.size(), playerHandsAfter.size());
+
+        // Assert playerHand has changed for every player
+        for(int i = 0; i < playerHandsBefore.size(); i++){
+            System.out.println("Hand of " + users.get(i).getUsername() + ":");
+            String before = playerHandsBefore.get(i).toString("\tBefore: ");
+            String after = playerHandsAfter.get(i).toString("\n\t After: ");
+            System.out.println(before + after);
+            assertNotEquals(playerHandsBefore.get(i).getActiveCards(), playerHandsAfter.get(i).getActiveCards());
+        }
     }
 
 }

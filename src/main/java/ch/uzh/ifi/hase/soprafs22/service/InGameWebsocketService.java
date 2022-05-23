@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.CardExchangeDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
@@ -285,5 +286,28 @@ public class InGameWebsocketService {
         }
         System.out.println("Can't use that card");
         return false;
+    }
+
+    public void exchangeCards(Game game, User user, CardDTO cardDTO) {
+        Card userCard = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+        
+        Card teammateCard = game.exchangeCards(user, userCard);
+        gameRepository.saveAndFlush(game);
+        
+        if(teammateCard == null) return;
+
+        // FIXME: Ugly
+        PlayerState teammate = game.getTeammate(game.getPlayerState(user.getUsername()));
+
+        CardExchangeDTO userResponse = new CardExchangeDTO();
+        userResponse.setOldCard(userCard);
+        userResponse.setNewCard(teammateCard);
+        simpMessagingTemplate.convertAndSendToUser(user.getUsername(), "client/cards/exchange", userResponse);
+
+        CardExchangeDTO teammateResponse = new CardExchangeDTO();
+        teammateResponse.setOldCard(teammateCard);
+        teammateResponse.setNewCard(userCard);
+        simpMessagingTemplate.convertAndSendToUser(teammate.getUsername(), "client/cards/exchange", teammateResponse);
+    
     }
 }

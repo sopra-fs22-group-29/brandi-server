@@ -26,14 +26,17 @@ public class PlayerHand {
     /* Delete a card from playerHand, used when card is played */
     public void deleteCard(Card cardToDelete){
         for(Card card : this.activeCards){
-            if(card.getRank().equals(cardToDelete.getRank()) && card.getSuit().equals(cardToDelete.getSuit())){
+            if(/* card.getId().equals(cardToDelete.getId()) || */ card.getRank().equals(cardToDelete.getRank()) && card.getSuit().equals(cardToDelete.getSuit())){
                 this.activeCards.remove(card);
                 return;
             }
         }
     }
 
-    /* Draw new cards, used at beginning of new round */
+    /**
+     * Draw set of cards (replaces cards currently in hand)
+     * @param cards to draw
+     */
     public void drawCards(Set<Card> cards){
         if(!(cards == null)){
             try {
@@ -46,6 +49,9 @@ public class PlayerHand {
         }
     }
 
+    public void addCard(Card card){
+        this.activeCards.add(card);
+    }
 
     public Set<Card> getActiveCards() {
         return this.activeCards;
@@ -57,5 +63,13 @@ public class PlayerHand {
 
     public Boolean isEmpty(){
         return this.activeCards.isEmpty();
+    }
+
+    public String toString(String prefix){
+        String out = (prefix == null) ? "" : prefix;
+        for(Card card: this.activeCards){
+            out += card.getRank() + " of " + card.getSuit() + ",  ";
+        }
+        return out;
     }
 }
