@@ -168,12 +168,12 @@ public class GameService {
         return null;
     }
 
-    public Game surrenderCards(String uuid, String username) {   
-        Game game = this.getGameByUuidOfUser(uuid, username); 
-        game.surrenderCards(username);
-        gameRepository.saveAndFlush(game);
-        return game;
-    }
+    // public Game surrenderCards(String uuid, String username) {   
+    //     Game game = this.getGameByUuidOfUser(uuid, username); 
+    //     game.surrenderCards(username);
+    //     gameRepository.saveAndFlush(game);
+    //     return game;
+    // }
     
         /**
      * sets the player status online

@@ -76,6 +76,10 @@ public class InGameWebsocketController {
         //Not great to fetch again
         game = gameService.getGameByUuidOfUser(uuid, username);
         inGameWebsocketService.notifyPlayersAfterMove(game, move, marblesSet);
+        //check if move possible
+        Boolean movePossible = checkMovePossibleWithAnyCard(game, game.getNextTurn().getPlayer().getUsername());
+        inGameWebsocketService.notifySpecificUser("/client/movePossible", game.getNextTurn().getPlayer().getUsername(), movePossible);
+
     }
 
     @MessageMapping("/websocket/{uuid}/join")
@@ -99,6 +103,8 @@ public class InGameWebsocketController {
         // provide the user's updated information to all other members in the lobby
         UserGetDTO user = DTOMapper.INSTANCE.convertEntityToUserGetDTO(userService.getUser(principal.getName()));
         inGameWebsocketService.notifyAllOtherGameMembers("/client/player/joined", game, principal.getName(), playerState);
+        Boolean movePossible = checkMovePossibleWithAnyCard(game, principal.getName());
+        inGameWebsocketService.notifySpecificUser("/client/movePossible", principal.getName(), movePossible);
     }
 
 
