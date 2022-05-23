@@ -55,15 +55,14 @@ public class UserController {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
     }
 
-    @PostMapping("/users/{id}")
+    @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO updateUser(@PathVariable(name = "id") String id, @RequestBody UserUpdateDTO userUpdateDTO) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-
-        // update user
-        User updatedUser = userService.updateUser(Long.parseLong(id), userUpdateDTO, userName);
+        User userInput = DTOMapper.INSTANCE.convertUserUpdateDTOtoEntity(userUpdateDTO);
+        User updatedUser = userService.updateUser(Long.parseLong(id), userInput, userName);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
     }

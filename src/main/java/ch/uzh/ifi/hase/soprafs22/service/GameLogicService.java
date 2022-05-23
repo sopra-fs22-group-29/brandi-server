@@ -39,9 +39,9 @@ public class GameLogicService {
      * @param cardRank
      * @param balls
      * @param ball to move with
-     * @return Set<Integer> of possible moves with ball
+     * @return Set<Integer> of possible moves with ball relative to ball position
      */
-    public Set<Integer> getPossibleMoves(Game game, Rank cardRank, Set<Ball> balls, Ball ball) {
+    public static Set<Integer> getPossibleMoves(Game game, Rank cardRank, Set<Ball> balls, Ball ball) {
         Set<Integer> possibleMoves = new HashSet<Integer>();
 
         if (BoardState.normalCards.get(cardRank) != null) {
@@ -370,7 +370,7 @@ public class GameLogicService {
         }
     }
 
-    public Set<Integer> getStartPosition(Ball ball) {
+    public static Set<Integer> getStartPosition(Ball ball) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             return Set.of(0);
@@ -387,7 +387,7 @@ public class GameLogicService {
     }
 
 
-    public int getBaseEndPosition(Ball ball) {
+    public static int getBaseEndPosition(Ball ball) {
 
         if (ball.getColor().equals(Color.GREEN)) {
             return 67;
@@ -408,7 +408,7 @@ public class GameLogicService {
         return lastPositions.contains(ballPosition);
     }
 
-    public Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
+    public static Set<Integer> excludeTooLongMoves (Ball ball, Set<Integer> possibleMoves) {
 
         Set<Integer> strippedMoves = new HashSet<>(possibleMoves);
 
@@ -430,11 +430,11 @@ public class GameLogicService {
         return strippedMoves;
     }
 
-    public int maximumMoveInBase(Ball ball) {
+    public static int maximumMoveInBase(Ball ball) {
         return getBaseEndPosition(ball) - ball.getPosition();
     }
 
-    public Set<Integer> checkBallOnTheWayOnStarting(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
+    public static Set<Integer> checkBallOnTheWayOnStarting(Ball ball, Set<Ball> balls, Set<Integer> possibleMoves) {
 
         int startPos = ball.getPosition();
 
@@ -459,7 +459,7 @@ public class GameLogicService {
                             && getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                             toBeRemoved.add(possibleMove);
                     }
-                    else if (getHolesTravelled(destination%63, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
+                    else if (getHolesTravelled(destination%64, startPos, true).stream().skip(1).anyMatch(x -> x == ballPos)) {
                         toBeRemoved.add(possibleMove);
                     }
                 }
@@ -490,7 +490,7 @@ public class GameLogicService {
 
             for (Ball b: balls) {
                 int pos = b.getPosition();
-                if (b.getColor() == color && b.checkBallInBase() && ball != b) {
+                if (/* b.getColor() == color && */ b.checkBallInBase() && ball != b) {
                     for (int destination : tempDestinations) {
                         if (destination >= pos) {
                             toBeRemoved.add(destination);
@@ -548,7 +548,7 @@ public class GameLogicService {
     // 2 IF CAN GO OUT OF HOME,
     // 1 IF START IS OCCUPIED,
     // 0 IF BALL NOT IN HOME
-    public int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
+    public static int checkCanGoOutOfHome (Ball ball, Set<Ball> balls) {
 
         Color color = ball.getColor();
 
@@ -611,7 +611,7 @@ public class GameLogicService {
 
     }
 
-    private boolean canSwitchBallWithJack(Ball ball, Ball targetBall, Game game) {
+    private static boolean canSwitchBallWithJack(Ball ball, Ball targetBall, Game game) {
         Color userColor = ball.getColor();
         Color teammateColor = game.getColorOfTeammate(userColor);
         if(targetBall.getColor().equals(userColor) || targetBall.getColor().equals(teammateColor)){

@@ -214,7 +214,7 @@ public class Game {
         if(ball == null) return false;
 
         // Only go to next player if move was not with a SEVEN or all seven holes were travelled with the SEVEN
-        if(this.holesTravelled.equals(0) | this.holesTravelled.equals(7)){
+        if(this.holesTravelled.equals(0) || this.holesTravelled.equals(7)){
             // Remove played card from hand
             PlayerHand hand = this.getNextTurn().getPlayerHand();
             hand.deleteCard(move.getPlayedCard());

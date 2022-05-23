@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
@@ -38,6 +39,10 @@ public interface DTOMapper {
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "games", ignore = true)
     User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
+
+    @Mapping(source ="username", target = "username")
+    @Mapping(source="password", target="password")
+    User convertUserUpdateDTOtoEntity(UserUpdateDTO userUpdateDTO);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")

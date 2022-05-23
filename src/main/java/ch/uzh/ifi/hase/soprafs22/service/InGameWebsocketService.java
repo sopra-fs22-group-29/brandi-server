@@ -10,7 +10,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
@@ -18,15 +17,13 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import org.ietf.jgss.GSSName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -202,6 +199,21 @@ public class InGameWebsocketService {
             return false;
         }
         
+        if(card.getRank().equals(Rank.SEVEN)){
+            // Sum max move with each marble that user can move with
+            // If less than 7 -> User will not be able to move 7 holes -> Isn't allowed to use that card
+            Integer allPossibleMovesAdded = 0;
+            for(Integer ballPos: marblesSet){
+                Ball ball = game.getBoardstate().getBallByPosition(ballPos);
+                Set<Integer> possibleMoves =  GameLogicService.getPossibleMoves(game, card.getRank(), balls, ball);
+
+                Integer longestMoveWithBall = Collections.max(possibleMoves);
+                allPossibleMovesAdded += longestMoveWithBall;
+            }
+            if(allPossibleMovesAdded < 7) return false;
+        }
+        
+
         int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 
         HighlightMarblesDTO highlightMarblesDTO = new HighlightMarblesDTO();

@@ -193,7 +193,7 @@ public class InGameWebsocketController {
 
         Ball ball = boardState.getBallById(ballId);
 
-        Set<Integer> possibleMoves = gameLogicService.getPossibleMoves(game, selectMarbleDTO.getRank(), balls, ball);
+        Set<Integer> possibleMoves = GameLogicService.getPossibleMoves(game, selectMarbleDTO.getRank(), balls, ball);
 
         Set<Integer> highlightedHolesSet = gameLogicService.getPossibleDestinations(possibleMoves, ball, balls);
 
@@ -206,23 +206,4 @@ public class InGameWebsocketController {
         // provide the user with a list of marbles he could move
         inGameWebsocketService.notifySpecificUser("/client/highlight/holes", principal.getName(), selectMarbleResponseDTO);
     }
-
-
-    /**
-     * We can use a method of this form to send a board state update to all the players that are currently connected
-     * to the same game.
-     *
-     * @param principal Authenticated user information
-     */
-    @MessageMapping("/websocket/{uuid}/test")
-    public void test(@DestinationVariable String uuid, Principal principal) throws Exception {
-
-        // we still have to verify if the player is actually playing in the game with that uuid
-
-        Game game = gameService.getGameByUuid(uuid);
-
-        // the payload can be a anything you want to send to the clients
-        inGameWebsocketService.notifyAllGameMembers("/client/test", game, principal.getName() + " sent a test message!");
-    }
-
 }
