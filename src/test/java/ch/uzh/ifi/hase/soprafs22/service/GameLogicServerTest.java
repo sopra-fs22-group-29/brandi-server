@@ -1482,6 +1482,7 @@ public class GameLogicServerTest {
         // Add balls that user can swap with
         balls.addAll(Set.of(red17, yellow33, blue63));
 
+        // All balls that are not his own color and not in Home, Base or Start-position
         Set<Integer> expectedDestinationsWithGreen1 = Set.of(red17.getPosition(), yellow33.getPosition(), blue63.getPosition());
 
         testMovesWithJack(color, ballToMoveWith, ballOnStart, balls, expectedDestinationsWithGreen1);
@@ -1501,6 +1502,7 @@ public class GameLogicServerTest {
         // Add balls that user can swap with
         balls.addAll(Set.of(green28, yellow33, blue55));
 
+        // All balls that are not his own color and not in Home, Base or Start-position
         Set<Integer> expectedDestinationsWithGreen1 = Set.of(green28.getPosition(), yellow33.getPosition(), blue55.getPosition());
 
         testMovesWithJack(color, ballToMoveWith, ballOnStart, balls, expectedDestinationsWithGreen1);
@@ -1520,6 +1522,7 @@ public class GameLogicServerTest {
         // Add balls that user can swap with
         balls.addAll(Set.of(green28, red44, blue55));
 
+        // All balls that are not his own color and not in Home, Base or Start-position
         Set<Integer> expectedDestinationsWithGreen1 = Set.of(green28.getPosition(), red44.getPosition(), blue55.getPosition());
 
         testMovesWithJack(color, ballToMoveWith, ballOnStart, balls, expectedDestinationsWithGreen1);
@@ -1539,6 +1542,7 @@ public class GameLogicServerTest {
         // Add balls that user can swap with
         balls.addAll(Set.of(green28, red33, yellow55));
 
+        // All balls that are not his own color and not in Home, Base or Start-position
         Set<Integer> expectedDestinationsWithGreen1 = Set.of(green28.getPosition(), red33.getPosition(), yellow55.getPosition());
 
         testMovesWithJack(color, ballToMoveWith, ballOnStart, balls, expectedDestinationsWithGreen1);
@@ -1547,9 +1551,13 @@ public class GameLogicServerTest {
 
     private void testMovesWithJack(Color color, Ball ball, Ball ballOnStart, Set<Ball> balls, Set<Integer> expectedDestinationsWithBall){
 
-        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(null, Rank.JACK, balls, color, color);
-        assertEquals(Set.of(ball.getPosition(), ballOnStart.getPosition()), highlightedBalls);
+        // User can only make move with his own marbles that are not in home or base
+        Set<Integer> actualHighlightedBalls = gameLogicService.highlightBalls(null, Rank.JACK, balls, color, color);
+        Set<Integer> expectedHighlightedBalls = Set.of(ball.getPosition(), ballOnStart.getPosition());
 
+        assertEquals(expectedHighlightedBalls, actualHighlightedBalls);
+
+        // User can only swap with the expected balls
         Set<Integer> possibleMoves = GameLogicService.getPossibleMoves(null, Rank.JACK, balls, ball);
         Set<Integer> actualDestinationsWithGreen1 = gameLogicService.getPossibleDestinations(possibleMoves, ball, balls);
 
