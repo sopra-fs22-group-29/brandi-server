@@ -79,18 +79,18 @@ public class GameLogicService {
         // IF BALL IN BASE EXCLUDE TOO LONG MOVES
         possibleMoves = excludeTooLongMoves(ball, possibleMoves);
 
-        // TODO: THIS IMPLEMENTS JACK WITH KILLING INSTEAD OF EXCHANGING POSITION; WILL HAVE TO MAKE SEPARATE CALL AS FOR THE 7
        if (cardRank.equals(Rank.JACK)) {
-           // EXCHANGE TWO BALLS
-           // A marble positioned at the start, at home or in the
-           // target area, may not be exchanged.
-           for (Ball b : balls) {
-               int ballPos = b.getPosition();
-               if (!getStartPosition(b).contains(b.getPosition()) && ballPos >= 0 
-                    && ballPos <= 63 && b != ball && canSwitchBallWithJack(ball, b, game)) {
 
-                   int possibleMove = b.getPosition() - ball.getPosition();
-                   possibleMoves.add(possibleMove);
+            // Can't use JACK on balls in Home or Base
+            if(ball.checkBallInBase() || ball.checkBallInHome()){
+                return possibleMoves;
+            }
+
+            for (Ball b : balls) {
+                if (canSwitchBallWithJack(ball, b, game)){
+
+                    int possibleMove = b.getPosition() - ball.getPosition();
+                    possibleMoves.add(possibleMove);
 
                }
            }
@@ -613,11 +613,20 @@ public class GameLogicService {
 
     private static boolean canSwitchBallWithJack(Ball ball, Ball targetBall, Game game) {
         Color userColor = ball.getColor();
-        // FIXME: I think user can switch his marble with any other marble except his own
-        /* Color teammateColor = game.getColorOfTeammate(userColor); */
-        if(targetBall.getColor().equals(userColor) /* || targetBall.getColor().equals(teammateColor) */){
+        int targetBallPos = targetBall.getPosition();
+        // cant move with your own balls
+        if(targetBall.getColor().equals(userColor)) return false;
+
+        // Can't swap with ball that is in start position
+        if(getStartPosition(targetBall).contains(targetBall.getPosition())){
             return false;
         }
+        // Can't swap with ball that is in base or home
+        if(targetBallPos < 0 || targetBallPos > 63) return false;
+
+        // Cant swap ball with itself
+        if(targetBall.equals(ball)) return false;
+
         return true;
     }
 
