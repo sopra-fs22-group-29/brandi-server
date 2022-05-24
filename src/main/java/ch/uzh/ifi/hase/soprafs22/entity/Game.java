@@ -68,6 +68,8 @@ public class Game {
     @JoinColumn(name = "Card_id")
     private Card lastCardPlayed;
 
+    private Integer winnerTeam;
+
     public Game() {}
 
     public Game(User player) {
@@ -92,10 +94,16 @@ public class Game {
 
         // Information for initializing the balls with correct positions
         Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();
-        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
+       /*  positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
         positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(84, 85, 86, 87)));
         positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(88, 89, 90, 91)));
-        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95))); */
+
+        // Used to test gameWinning logic
+        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(58, 65, 66, 67)));
+        positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(10, 69, 70, 71)));
+        positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(72, 73, 74, 75)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(42, 77, 78, 79)));
 
         // Add 4 balls for each playerColor
         for(Color color: Color.values()){
@@ -111,17 +119,10 @@ public class Game {
         PlayerHand playerHand = new PlayerHand();
         playerHand.drawCards(this.deck.drawCards(6));
 
-        //TODO: Should probably be moved elsewhere
-        Map<Color, Integer> ColorToTeam = Map.of(
-            Color.GREEN, 0,
-            Color.BLUE, 1,
-            Color.RED, 1,
-            Color.YELLOW, 0
-        );
         // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
         Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
 
-        Integer team = ColorToTeam.get(userColor);
+        Integer team = getTeamByColor(userColor);
         this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
@@ -202,7 +203,11 @@ public class Game {
      * @return Boolean moveExecuted
      */
     public Boolean makeMove(Move move){
-        Boolean moveExecuted = false;
+
+        if(this.gameOver){
+            System.out.println("Game is already over, cannot make a move anymore!");
+            return false;
+        }
 
         Ball ball = null;
         for(Ball b: this.boardstate.getBalls()){
@@ -267,9 +272,11 @@ public class Game {
             }
         }
 
-        //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
-        return moveExecuted;        
+
+        checkGameOver();
+
+        return true;        
     }
 
     private void nextPlayer(){
@@ -294,6 +301,28 @@ public class Game {
     public PlayerState getNextTurn(){
         if(this.activePlayer == null) return null;
         return this.playerStates.get(this.activePlayer);
+    }
+
+    public Boolean checkGameOver(){
+        Boolean teamZeroFinished = true;
+        Boolean teamOneFinished = true;
+        Set<Ball> balls = this.boardstate.getBalls();
+        for(Ball ball: balls){
+            if(!ball.checkBallInBase()){
+                if(getTeamByColor(ball.getColor()).equals(0)) {
+                    teamZeroFinished = false;
+                } else{
+                    teamOneFinished = false;
+                }
+            }
+        }
+
+        if(teamOneFinished || teamZeroFinished){
+            this.gameOver = true;
+            this.winnerTeam = teamZeroFinished ? 0 : 1;
+            System.out.println("!!! Game is over, team " + winnerTeam + " won!!! ");
+        }
+        return teamZeroFinished || teamOneFinished;
     }
 
     // return true if all players have no more cards
@@ -434,6 +463,10 @@ public class Game {
         this.lastCardPlayed = lastCardPlayed;
     }
 
+    public Integer getWinnerTeam() {
+        return this.winnerTeam;
+    }
+
     @JsonIgnore
     public Optional<Color> getUserColorById(Long id){
         for(PlayerState playerState: this.playerStates){
@@ -468,5 +501,16 @@ public class Game {
             }
         }
         return userColor;
+    }
+
+    @JsonIgnore
+    public Integer getTeamByColor(Color color){
+        Map<Color, Integer> ColorToTeam = Map.of(
+            Color.GREEN, 0,
+            Color.BLUE, 1,
+            Color.RED, 1,
+            Color.YELLOW, 0
+        );
+        return ColorToTeam.get(color);
     }
 }

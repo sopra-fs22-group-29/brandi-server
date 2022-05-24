@@ -116,6 +116,13 @@ public class InGameWebsocketService {
 
         PlayerState nextUser = game.getNextTurn();
 
+        // Game is over: Send winning team to all users in game
+        if(game.getGameOver()){
+            Integer winningTeam = game.getWinnerTeam();
+            this.notifyAllGameMembers("/client/gameOver", game, winningTeam);
+            return;
+        }
+
         // No user can play any cards anymore -> Start new round
         if(nextUser == null){ 
             game.startNewRound();
