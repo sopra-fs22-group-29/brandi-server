@@ -6,6 +6,8 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.IdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -28,9 +32,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class GameController {
 
     private final GameService gameService;
+   
 
     GameController(GameService gameService) {
         this.gameService = gameService;
+ 
     }
 
     @PostMapping("/game")
@@ -83,6 +89,6 @@ public class GameController {
     @ResponseBody
     public Color getColorOfUserInGame(@PathVariable(name = "uuid") String uuid, @RequestBody IdDTO id){
         return gameService.getColorOfUserInGame(uuid, id.getId());
-
     }
+
 }

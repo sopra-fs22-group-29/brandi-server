@@ -7,7 +7,10 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.IdDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs22.service.AuthenticatedUserService;
+import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
+import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,8 +44,24 @@ public class GameControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * https://stevenschwenke.de/DontComponentScanInMainSpringApplicationClassWhenUsingSpringWebMVCTest
+     * Had a problem like this when adding GameLogicService to the GameController class:
+     * NoSuchBeanDefinitionException: No qualifying bean of type 'ch.uzh.ifi.hase.soprafs22.service.GameLogicService' available:
+     *   expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {} 
+     * Has something to do with the test automatically loading different beans which use UserRepository which then leads to errors (... I think)
+     * Mocking all those beans solved the problem
+     */
     @MockBean
     private GameService gameService;
+    @MockBean
+    private UserService userService;
+    @MockBean
+    private GameLogicService gameLogicService;
+    @MockBean
+    private AuthenticatedUserService authenticatedUserService;
+    @MockBean
+    private InGameWebsocketService inGameWebsocketService;
 
     @Test
     public void createGame_validInput_gameCreated() throws Exception {
