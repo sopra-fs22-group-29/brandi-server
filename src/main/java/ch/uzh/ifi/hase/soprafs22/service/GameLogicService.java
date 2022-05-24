@@ -613,8 +613,9 @@ public class GameLogicService {
 
     private static boolean canSwitchBallWithJack(Ball ball, Ball targetBall, Game game) {
         Color userColor = ball.getColor();
-        Color teammateColor = game.getColorOfTeammate(userColor);
-        if(targetBall.getColor().equals(userColor) || targetBall.getColor().equals(teammateColor)){
+        // FIXME: I think user can switch his marble with any other marble except his own
+        /* Color teammateColor = game.getColorOfTeammate(userColor); */
+        if(targetBall.getColor().equals(userColor) /* || targetBall.getColor().equals(teammateColor) */){
             return false;
         }
         return true;

@@ -285,4 +285,17 @@ public class GameLogicServerTest {
 //
 //    }
 
+    @Test
+    public void MovesWithJack() {
+        Set<Ball> balls = new HashSet<>();
+        balls.add(green1);
+        balls.add(red17);
+
+        Set<Integer> possibleDestinationsWithGreen1 = Set.of(red17.getPosition());
+        
+        Set<Integer> highlightedBalls = gameLogicService.highlightBalls(null, Rank.JACK, balls, Color.GREEN, Color.YELLOW);
+        assertEquals(Set.of(green1.getPosition()), highlightedBalls);
+    }
+
 }
+
