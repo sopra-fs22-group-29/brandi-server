@@ -52,6 +52,10 @@ public class BoardState {
         return this.balls;
     }
 
+    public void setBalls(Set<Ball> balls) {
+        this.balls = balls;
+    }    
+
     public Ball getBallById (Long ballId) {
         for (Ball ball : balls) {
             if (ball.getId().equals(ballId)) {return ball;}
