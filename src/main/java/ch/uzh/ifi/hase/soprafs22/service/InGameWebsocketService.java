@@ -14,7 +14,6 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.HighlightMarblesDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 
-import org.ietf.jgss.GSSName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
