@@ -213,7 +213,9 @@ public class Game {
         }
         if(ball == null) return false;
 
-        if(this.holesTravelled.equals(0) | this.holesTravelled.equals(7)){
+        // Only go to next player if move was not with a SEVEN or all seven holes were travelled with the SEVEN
+        if(this.holesTravelled.equals(0) || this.holesTravelled.equals(7)){
+
             // Remove played card from hand
             PlayerHand hand = this.getNextTurn().getPlayerHand();
             hand.deleteCard(move.getPlayedCard());
@@ -224,20 +226,31 @@ public class Game {
             System.out.println("game.holestravelled > 7, this should never happen");
         }
 
-        // If ball at destination then move it back to home
         Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
 
         if (targetBall != null) {
-            System.out.println("BEFORE: " + targetBall.getPosition());
-            System.out.println("BALL MOVED BACK TO HOME");
+            // If ball at destination then move it back to home
+            if(move.getPlayedCard().getRank().equals(Rank.JACK)){
+                // Swap balls
+                GameLogicService.swapBalls(ball, targetBall, this.boardstate.getBalls());
+                
+                move.setTargetBallNewPosition(targetBall.getPosition());
+                move.setTargetBallId(targetBall.getId());
 
-            GameLogicService.ballBackToHome(targetBall,this.boardstate.getBalls());
+            } else {
+                System.out.println("BEFORE: " + targetBall.getPosition());
+                System.out.println("BALL MOVED BACK TO HOME");
 
-            move.setTargetBallNewPosition(targetBall.getPosition());
-            move.setTargetBallId(targetBall.getId());
+                GameLogicService.ballBackToHome(targetBall,this.boardstate.getBalls());
 
-            System.out.println("AFTER: " + targetBall.getPosition());
+                move.setTargetBallNewPosition(targetBall.getPosition());
+                move.setTargetBallId(targetBall.getId());
+
+            
+                System.out.println("AFTER: " + targetBall.getPosition());
+            }
         }
+        
 
         move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
 

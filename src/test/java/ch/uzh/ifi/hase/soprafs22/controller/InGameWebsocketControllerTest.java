@@ -142,7 +142,7 @@ class InGameWebsocketControllerTest {
 
     @Test
     void move() {
-        String moveString = "{ \"playerCard\": { \"id\": " + kingCard.getId() +", \"ballId\": " + marbleId + ", \"destinationTile\": 0 }, \"marbleId\": " + marbleId + " }";
+        String moveString = "{ \"playedCard\": { \"index\": 0, \"rank\": \"KING\", \"suit\": \"CLUB\" }, \"ballId\": " + marbleId + ", \"destinationTile\": 0, \"index\": " + 0 + " }";
         webSocketStompClient.setMessageConverter(new SimpleMessageConverter());
         stompSession.send("/app/websocket/" + gameUuid + "/move", moveString.getBytes(StandardCharsets.UTF_8));
     }
