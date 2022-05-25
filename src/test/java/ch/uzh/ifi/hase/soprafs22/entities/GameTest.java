@@ -7,12 +7,10 @@ import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +37,7 @@ public class GameTest {
 
     private static List<Ball> balls;
     private static Set<Ball> ballsSet;
+    private static Card card;
 
     @BeforeAll
     public static void init() {
@@ -58,6 +57,9 @@ public class GameTest {
         positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(12, 13, 14, 15)));
         positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(28, 29, 30, 31)));
         positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(44, 45, 46, 47)));
+
+        
+        card = new Card(Rank.FOUR, Suit.CLUB);
     }
 
     @BeforeEach
@@ -134,12 +136,9 @@ public class GameTest {
         ballsSet.add(moveBall);
         boardState.setBalls(ballsSet);
 
-        Move move = new Move();
-        move.setBallId(moveBall.getId());
-        move.setPlayedCard(new Card(Rank.FOUR, Suit.CLUB));
-
         Integer destTile = 60;
-        move.setDestinationTile(destTile);
+        Move move = new Move(card, moveBall.getId(), destTile);
+
         Ball targetBall = boardState.getBallByPosition(destTile);
         assertNotNull(targetBall);
 

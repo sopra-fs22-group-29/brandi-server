@@ -8,6 +8,15 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 public class Move {
 
+    public Move() {
+    }
+
+    public Move(Card playedCard, Long ballId, int destinationTile) {
+        this.playedCard = playedCard;
+        this.ballId = ballId;
+        this.destinationTile = destinationTile;
+    }
+
     private User user;
     private Card playedCard;
     private Long ballId;
