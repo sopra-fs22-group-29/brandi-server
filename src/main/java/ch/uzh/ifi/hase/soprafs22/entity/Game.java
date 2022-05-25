@@ -325,33 +325,6 @@ public class Game {
         return teamZeroFinished || teamOneFinished;
     }
 
-    // return true if all players have no more cards
-    public Boolean allPlayersFinished(){
-        for(PlayerState playerstate: this.playerStates){
-            if(!playerstate.getPlayerHand().getActiveCards().isEmpty()) return false;
-        }
-        return true;
-    }
-
-    // Check if all players in game are active in this game, only works if game is started already
-    public Boolean checkAllPlayersInGame(){
-        for(PlayerState playerState: this.playerStates){
-            Optional<Long> optGameId = playerState.getCurrentGameId();
-            if(optGameId.isPresent()){
-                Long gameId = optGameId.get();
-                if(gameId.equals(this.id)){
-                    continue;
-                } else {
-                    System.out.println("User is active in a different game");
-                    return false;
-                }
-            } else{
-                System.out.println("Couldnt find an active game for user");
-            }
-        }
-        return true;
-    }
-
     public void pauseGame(){
         this.gameOn = false;
     }
@@ -368,20 +341,8 @@ public class Game {
         return this.id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUuid() {
         return this.uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean isGameOver() {
-        return this.gameOver;
     }
 
     public Boolean getGameOver() {
@@ -392,48 +353,20 @@ public class Game {
         this.gameOver = gameOver;
     }
 
-    public Boolean isGameOn() {
-        return this.gameOn;
-    }
-
     public Boolean getGameOn() {
         return this.gameOn;
-    }
-
-    public void setGameOn(Boolean gameOn) {
-        this.gameOn = gameOn;
     }
 
     public Integer getRoundsPlayed() {
         return this.roundsPlayed;
     }
 
-    public void setRoundsPlayed(Integer roundsPlayed) {
-        this.roundsPlayed = roundsPlayed;
-    }
-
     public List<PlayerState> getPlayerStates() {
         return this.playerStates;
     }
 
-    public void setPlayerStates(ArrayList<PlayerState> playerStates) {
-        this.playerStates = playerStates;
-    }
-
     public BoardState getBoardstate() {
         return this.boardstate;
-    }
-
-    public void setBoardstate(BoardState boardstate) {
-        this.boardstate = boardstate;
-    }
-
-    public Deck getDeck() {
-        return this.deck;
-    }
-
-    public void setDeck(Deck deck) {
-        this.deck = deck;
     }
 
     public Integer getHolesTravelled() {
@@ -457,10 +390,6 @@ public class Game {
 
     public Card getLastCardPlayed() {
         return this.lastCardPlayed;
-    }
-
-    public void setLastCardPlayed(Card lastCardPlayed) {
-        this.lastCardPlayed = lastCardPlayed;
     }
 
     public Integer getWinnerTeam() {
