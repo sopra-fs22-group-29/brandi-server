@@ -31,13 +31,11 @@ public class Move {
     private List<Long> ballIdsEliminated;
     private List<Integer> newPositions;
 
+
     public List<Integer> getNewPositions() {
         return this.newPositions;
     }
 
-    public void setNewPositions(List<Integer> newPositions) {
-        this.newPositions = newPositions;
-    }
 
     public void addNewPositions(Integer position){
         if(this.newPositions == null) this.newPositions = new ArrayList<Integer>();
@@ -46,10 +44,6 @@ public class Move {
 
     public List<Long> getBallIdsEliminated() {
         return this.ballIdsEliminated;
-    }
-
-    public void setBallIdsEliminated(List<Long> ballIdsEliminated) {
-        this.ballIdsEliminated = ballIdsEliminated;
     }
 
     public void addBallIdsEliminated(Long ballId){
@@ -64,6 +58,8 @@ public class Move {
     public void setIndex(int index) {
         this.index = index;
     }
+
+
     public User getUser() {
         return user;
     }
