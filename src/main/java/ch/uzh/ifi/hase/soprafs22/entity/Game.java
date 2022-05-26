@@ -76,7 +76,7 @@ public class Game {
     // Needed for SEVEN
     private Integer holesTravelled;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinColumn(name = "Card_id")
     private Card lastCardPlayed;
 
@@ -224,7 +224,7 @@ public class Game {
         } else if(this.holesTravelled < 7) {
             this.lastCardPlayed = move.getPlayedCard();
         } else {
-            System.out.println("game.holestravelled > 7, this should never happen");
+            System.out.println("game.holestravelled  = " + this.holesTravelled + "> 7, this should never happen");
         }
 
         Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
