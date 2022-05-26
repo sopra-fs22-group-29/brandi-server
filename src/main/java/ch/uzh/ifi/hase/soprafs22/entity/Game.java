@@ -32,7 +32,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 
 @Entity
-@Table(name = "GAME")
+@Table(name = "GAME", schema = "public")
 @Transactional
 public class Game {
 

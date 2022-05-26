@@ -27,7 +27,7 @@ import java.util.Optional;
  * the primary key
  */
 @Entity
-@Table(name = "USER")
+@Table(name = "USER", schema = "public")
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
