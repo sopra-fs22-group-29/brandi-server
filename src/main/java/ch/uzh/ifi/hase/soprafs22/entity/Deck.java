@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
@@ -28,10 +30,17 @@ public class Deck {
     @Transient
     private RestTemplate restTemplate = new RestTemplate();
 
-    public Deck() {}
+    @Transient
+    private HttpEntity<String> entity;
+
+    public Deck() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        this.entity = new HttpEntity<>("parameters", headers);
+    }
 
     public void initialize() {
-//        String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
         StringBuilder url = new StringBuilder("https://deckofcardsapi.com/api/deck/new/shuffle/?cards=");
         for(String suit : AVAILABLE_SUITS) {
             for(String rank : AVAILABLE_RANKS) {
@@ -39,21 +48,22 @@ public class Deck {
             }
         }
         url.deleteCharAt(url.length() - 1);
-        System.out.println(url.toString());
-        DeckDTO result = this.restTemplate.getForObject(url.toString(), DeckDTO.class);
+        System.out.println(url);
+        DeckDTO result = this.restTemplate.exchange(url.toString(), HttpMethod.GET, entity, DeckDTO.class).getBody();
 
         this.deck_id = result.getDeck_id();
     }
 
     public void refillDeck() {
         String url = String.format("%sdeck/%s/return/", baseUrl, this.deck_id);
-        this.restTemplate.getForObject(url, String.class);
+        this.restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
         System.out.println("Deck was refilled successfully");
     }
 
     public Card drawCard() {
         String url = String.format("%sdeck/%s/draw/?count=1", baseUrl, this.deck_id);
-        DrawCardsDTO result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
+        DrawCardsDTO result = this.restTemplate.exchange(url, HttpMethod.GET, entity, DrawCardsDTO.class).getBody();
         return this.toCard(result.getCards().get(0));
     }
 
@@ -61,10 +71,10 @@ public class Deck {
         Set<Card> cards = new HashSet<>();
         String url = String.format("%sdeck/%s/draw/?count=%d", baseUrl, this.deck_id, amount);
 
-        DrawCardsDTO result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
+        DrawCardsDTO result = this.restTemplate.exchange(url, HttpMethod.GET, entity, DrawCardsDTO.class).getBody();
         if (!result.getSuccess()) {
             this.refillDeck();
-            result = this.restTemplate.getForObject(url, DrawCardsDTO.class);
+            result = this.restTemplate.exchange(url, HttpMethod.GET, entity, DrawCardsDTO.class).getBody();
         }
         for (CardDTO cardDTO : result.getCards()) {
             cards.add(this.toCard(cardDTO));
