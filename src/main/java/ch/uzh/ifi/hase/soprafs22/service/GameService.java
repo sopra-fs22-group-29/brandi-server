@@ -41,15 +41,6 @@ public class GameService {
         this.userRepository = userRepository;
     }
 
-    public Game getGame(Long Id) {
-        Optional<Game> game = this.gameRepository.findById(Id);
-        if(game.isPresent()){
-            return game.get();
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Couldn't find Game");
-        }
-    }
-
     public String createGame(Long userId, String name) {
         Optional<User> optUser = this.userRepository.findById(userId);
         if(optUser.isPresent()){

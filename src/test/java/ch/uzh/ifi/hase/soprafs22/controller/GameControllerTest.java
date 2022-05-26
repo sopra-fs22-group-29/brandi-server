@@ -27,14 +27,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,10 +64,10 @@ public class GameControllerTest {
     private InGameWebsocketService inGameWebsocketService;
 
     @Test
+    @WithMockUser(username = "user1", password = "pwd", roles = "USER")
     public void createGame_validInput_gameCreated() throws Exception {
 
         // given
-
         String gameUUID = "123e4567-e89b-12d3-a456-426614174000";
 
         IdDTO idDTO = new IdDTO();
@@ -81,20 +81,17 @@ public class GameControllerTest {
                 .content(asJsonString(idDTO));
 
         mockMvc.perform(postRequest)
-//                .andExpect(status().isCreated())
-                .andExpect(status().isUnauthorized());
-//                .andExpect(jsonPath("$.uuid", is(gameUUID)));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$", is(gameUUID)));
 
     }
 
     @Test
+    @WithMockUser(username = "user1", password = "pwd", roles = "USER")
     public void givenGames_whenGetGames_thenReturnJsonArray() throws Exception {
 
         // given
-        Game game = new Game();
-
-        List<Game> allGames = Collections.singletonList(game);
-
+        List<Game> allGames = new ArrayList<>();
         given(gameService.getGames()).willReturn(allGames);
 
         // when
@@ -102,62 +99,56 @@ public class GameControllerTest {
 
         // then
         mockMvc.perform(getRequest)
-//                .andExpect(status().isOk())
-                .andExpect(status().isUnauthorized());
-//                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
 
     }
 
     @Test
+    @WithMockUser(username = "user1", password = "pwd", roles = "USER")
     public void givenUuid_whenGetGameByUuid_thenReturnJsonArray() throws Exception {
 
         // given
-        String uuid = "123e4567-e89b-12d3-a456-426614174000";
-
         User testPlayer = new User("testUsername", "testPassword");
 
         Game game = new Game(testPlayer);
+        game.setName("test");
 
         game.addPlayer(testPlayer);
 
-        given(gameService.getGameByUuidOfUser(uuid, "testUsername")).willReturn(game);
+        given(gameService.getGameByUuidOfUser(Mockito.any(), Mockito.any())).willReturn(game);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/game/\"123e4567-e89b-12d3-a456-426614174000\"").contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest)
-//                .andExpect(status().isOk())
-                .andExpect(status().isUnauthorized());
-//                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("test")));
 
     }
 
     @Test
-    public void givenUuid_whenGetColorOfUserInGame_thenReturnColor() throws Exception {
+    @WithMockUser(username = "user1", password = "pwd", roles = "USER")
+    void joinGame() throws Exception {
 
-        // given
-        String uuid = "123e4567-e89b-12d3-a456-426614174000";
 
         User testPlayer = new User("testUsername", "testPassword");
 
-        Color color = Color.GREEN;
-
         Game game = new Game(testPlayer);
+        game.setName("test");
 
         game.addPlayer(testPlayer);
 
-        given(gameService.getColorOfUserInGame(uuid, 1L)).willReturn(color);
+        given(gameService.joinGame(Mockito.any(), Mockito.any())).willReturn(true);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/game/\"123e4567-e89b-12d3-a456-426614174000\"/color").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = put("/game/\"123e4567-e89b-12d3-a456-426614174000\"").contentType(MediaType.APPLICATION_JSON);
 
         // then
         mockMvc.perform(getRequest)
-//                .andExpect(status().isOk())
-                .andExpect(status().isUnauthorized());
-//                .andExpect(jsonPath("$", hasSize(1)));
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", is(true)));
     }
 
     private String asJsonString(final Object object) {

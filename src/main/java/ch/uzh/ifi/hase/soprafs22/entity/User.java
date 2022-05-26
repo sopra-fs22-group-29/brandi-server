@@ -36,9 +36,6 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @GeneratedValue
-    private String uuid;
-
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -57,13 +54,6 @@ public class User implements Serializable {
 
     @ManyToMany
     private List<Game> games;
-
-    public User(String username, Long id, String uuid, String password) {
-        this.username = username;
-        this.id = id;
-        this.uuid = uuid;
-        this.password = password;
-    }
 
     public User(String username, String password) {
         this.username = username;
