@@ -224,7 +224,12 @@ public class Game {
         } else if(this.holesTravelled < 7) {
             this.lastCardPlayed = move.getPlayedCard();
         } else {
-            System.out.println("game.holestravelled  = " + this.holesTravelled + "> 7, this should never happen");
+            System.out.println("\n\ngame.holestravelled  = " + this.holesTravelled + "> 7, this should never happen\nRemoving card from playerhand\n\n");
+            /* This should never be called, but if it ever happens that the logic with a seven is fucked, then just remove and go to next player
+            Better than doing nothing and blocking the whole game */
+            PlayerHand hand = this.getNextTurn().getPlayerHand();
+            hand.deleteCard(move.getPlayedCard());
+            this.nextPlayer();
         }
 
         Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
