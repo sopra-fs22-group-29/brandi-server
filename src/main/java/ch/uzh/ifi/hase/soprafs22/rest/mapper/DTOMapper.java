@@ -6,7 +6,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserAndGamesGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserUpdateDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
@@ -50,12 +49,6 @@ public interface DTOMapper {
     UserGetDTO convertEntityToUserGetDTO(User user);
 
     @Mapping(source = "id", target = "id")
-    @Mapping(source = "username", target = "username")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "games", target = "games")
-    UserAndGamesGetDTO convertEntityToUserAndGamesGetDTO(User user);
-
-    @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "uuid", target = "uuid")
     @Mapping(source = "gameOver", target = "gameOver")
@@ -85,12 +78,6 @@ public interface DTOMapper {
     @Mapping(target = "holesTravelled", ignore = true)
     @Mapping(target = "targetBallNewPosition", ignore = true)
     Move convertMovePostDTOtoEntity(MovePostDTO Move);
-
-
-    @Mapping(source = "rank", target = "rank")
-    @Mapping(source = "suit", target = "suit")
-    @Mapping(target = "index", ignore = true)
-    CardDTO convertEntityToCardDTO(Card Card);
 
     @Mapping(source = "rank", target = "rank")
     @Mapping(source = "suit", target = "suit")
