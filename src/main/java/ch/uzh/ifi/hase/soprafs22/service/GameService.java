@@ -157,24 +157,6 @@ public class GameService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found");
     }
-
-    public Game startNewRound(String uuid){
-        Optional<Game> optGame = gameRepository.findByUuid(uuid);
-        if(optGame.isPresent()){
-            Game game = optGame.get();
-            game.startNewRound();
-            gameRepository.saveAndFlush(game);
-            return game;
-        }
-        return null;
-    }
-
-    // public Game surrenderCards(String uuid, String username) {   
-    //     Game game = this.getGameByUuidOfUser(uuid, username); 
-    //     game.surrenderCards(username);
-    //     gameRepository.saveAndFlush(game);
-    //     return game;
-    // }
     
         /**
      * sets the player status online

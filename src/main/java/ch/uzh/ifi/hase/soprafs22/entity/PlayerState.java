@@ -108,8 +108,4 @@ public class PlayerState {
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(this.player);
     }
 
-    @JsonIgnore
-    public Optional<Long> getCurrentGameId(){
-        return this.player.getCurrentGameId();
-    }
 }
