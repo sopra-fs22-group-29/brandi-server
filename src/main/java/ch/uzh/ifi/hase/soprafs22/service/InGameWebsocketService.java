@@ -90,6 +90,10 @@ public class InGameWebsocketService {
             return null;
         }
 
+        if(!game.isFull()){
+            System.out.println("Game is not full yet, cant make a move");
+            return null;
+        }
         // User is not nextUser to play
         String nextPlayer = game.getNextTurn().getPlayer().getUsername();
         if(!nextPlayer.equals(username)){
