@@ -72,8 +72,9 @@ public class GameControllerTest {
 
         IdDTO idDTO = new IdDTO();
         idDTO.setId(1L);
+        idDTO.setName("test");
 
-        given(gameService.createGame(Mockito.any())).willReturn(gameUUID);
+        given(gameService.createGame(Mockito.any(), Mockito.any())).willReturn(gameUUID);
 
         MockHttpServletRequestBuilder postRequest = post("/game")
                 .contentType(MediaType.APPLICATION_JSON)
