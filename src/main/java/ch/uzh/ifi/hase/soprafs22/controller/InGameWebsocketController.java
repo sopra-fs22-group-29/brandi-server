@@ -1,5 +1,15 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import java.security.Principal;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Color;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.entity.Ball;
@@ -7,27 +17,17 @@ import ch.uzh.ifi.hase.soprafs22.entity.BoardState;
 import ch.uzh.ifi.hase.soprafs22.entity.Card;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.websocket.Move;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MoveGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.CardDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.SelectMarbleDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.MovePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.websocket.SelectMarbleResponseDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameLogicService;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.InGameWebsocketService;
-
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
-import org.springframework.http.HttpStatus;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Set;
 
 
 @Controller
