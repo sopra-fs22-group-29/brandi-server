@@ -1559,4 +1559,17 @@ public class GameLogicServerTest {
 
         assertEquals(expectedDestinationsWithBall, actualDestinationsWithGreen1);
     }
+
+    @Test
+    public void myBallsInBaseGetAccessToPartnersBalls() {
+
+        Rank cardRank = Rank.TWO;
+        Color playerColor = Color.GREEN;
+        Color teammateColor = Color.YELLOW;
+
+        Set<Ball> balls = new HashSet<>(Set.of(green64,green65,green66,green67,
+        yellow1,yellow18,yellow72,yellow88));
+
+        assertEquals(Set.of(1,18,72),gameLogicService.highlightBalls(new Game(), cardRank, balls, playerColor, teammateColor));
+    }
 }
