@@ -106,16 +106,16 @@ public class Game {
 
         // Information for initializing the balls with correct positions
         Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();
-       /*  positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
+        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
         positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(84, 85, 86, 87)));
         positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(88, 89, 90, 91)));
-        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95))); */
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95)));
 
         // Used to test gameWinning logic
-        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(58, 65, 66, 67)));
+/*         positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(58, 65, 66, 67)));
         positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(10, 69, 70, 71)));
         positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(72, 73, 74, 75)));
-        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(42, 77, 78, 79)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(42, 77, 78, 79))) */;
 
         // Add 4 balls for each playerColor
         for(Color color: Color.values()){
@@ -150,19 +150,6 @@ public class Game {
                 System.out.println("Player is already in this game, no action required. Returned true");
                 return false;
             }
-
-            // Check that user is in no other active game
-            // If currentGameId is not present then user is in no game -> proceed normally
-            Optional<Long> optGameId = player.getCurrentGameId();
-            if (optGameId.isPresent()) {
-                if(!optGameId.get().equals(this.id)){
-                    // TODO: make sure that a user can't play in multiple game simultaneously
-                    //  throw new Error("User is already in a different game");
-                } else{
-                    // User is already in this game
-                    return true;
-                }
-            }
             
             this.initPlayerState(player);
 
@@ -172,7 +159,6 @@ public class Game {
             }
             return true;
         } else{
-            // TODO: Should this throw error?
             System.out.println("Game has started / is full, Can't add new player with id " + player.getId());
             return false;
         }
@@ -183,13 +169,6 @@ public class Game {
     }
 
     public void startGame(){
-        //Check if all Users are in no other active game, should also be checked when adding a player
-//        for(PlayerState playerState: this.playerStates){
-//            Optional<Long> optGame = playerState.getCurrentGameId();
-//            optGame.ifPresent((game) -> {
-//                throw new Error("A user is already in an active game, can't start this game");
-//            });
-//        }
         this.gameOn = true;
     }
 
@@ -218,6 +197,11 @@ public class Game {
 
         if(this.gameOver){
             System.out.println("Game is already over, cannot make a move anymore!");
+            return false;
+        }
+
+        if(!this.isFull()) {
+            System.out.println("Game is not full yet, cant make a move");
             return false;
         }
 

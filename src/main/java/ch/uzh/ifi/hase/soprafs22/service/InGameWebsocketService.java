@@ -90,6 +90,8 @@ public class InGameWebsocketService {
             return null;
         }
 
+        if(!this.checkGameFull(game)) return null;
+
         // User is not nextUser to play
         String nextPlayer = game.getNextTurn().getPlayer().getUsername();
         if(!nextPlayer.equals(username)){
@@ -201,7 +203,9 @@ public class InGameWebsocketService {
 
     public Boolean selectCard(Game game, CardDTO cardDTO, String username, Set<Integer> marblesSet){
         Card card = DTOMapper.INSTANCE.convertCardDTOToEntity(cardDTO);
+
         if(!this.checkCanUseCard(game, card)) return true;
+        if(!this.checkGameFull(game)) return true;
 
         PlayerState playerState = game.getPlayerState(username);
 
@@ -303,5 +307,13 @@ public class InGameWebsocketService {
         }
         System.out.println("Can't use that card");
         return false;
+    }
+
+    private Boolean checkGameFull(Game game) {
+        if(!game.isFull()){
+            System.out.println("Game is not full yet");
+            return false;
+        }
+        return true;
     }
 }
