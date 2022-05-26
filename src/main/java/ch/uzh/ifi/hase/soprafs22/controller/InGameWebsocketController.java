@@ -139,7 +139,7 @@ public class InGameWebsocketController {
         if(game == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
-        game.endGame();
+        gameService.endGame(game);
         inGameWebsocketService.notifyAllOtherGameMembers("/client/surrender", game, principal.getName(), game);
 
     }

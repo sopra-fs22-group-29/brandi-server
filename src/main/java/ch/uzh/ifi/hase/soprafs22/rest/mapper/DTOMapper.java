@@ -56,6 +56,7 @@ public interface DTOMapper {
     UserAndGamesGetDTO convertEntityToUserAndGamesGetDTO(User user);
 
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "name", target = "name")
     @Mapping(source = "uuid", target = "uuid")
     @Mapping(source = "gameOver", target = "gameOver")
     @Mapping(source = "gameOn", target = "gameOn")

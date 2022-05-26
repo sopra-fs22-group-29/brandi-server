@@ -47,7 +47,7 @@ public class GameController {
 
         System.out.println("/game called");
 
-        return gameService.createGame(lobbyLeaderId.getId());
+        return gameService.createGame(lobbyLeaderId.getId(), lobbyLeaderId.getName());
     }
 
     @PutMapping("/game/{uuid}")
@@ -59,14 +59,14 @@ public class GameController {
         return success;
     }
 
-    //For testing purposes, state should probably be taken from Websocket by clients
     @GetMapping("/game")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<GameGetDTO> getGames() {
+    public List<GameGetDTO> getGames(Principal principal) {
         List<Game> allGames = gameService.getGames();
         List<GameGetDTO> allGamesDTO = new ArrayList<>();
         for(Game game : allGames){
+            if(game.getPlayerState(principal.getName()) == null || game.isGameOver()) continue;
             allGamesDTO.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
         }
         
@@ -82,13 +82,6 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "game not found by uuid");
         }
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
-    }
-
-    @GetMapping("/game/{uuid}/color")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public Color getColorOfUserInGame(@PathVariable(name = "uuid") String uuid, @RequestBody IdDTO id){
-        return gameService.getColorOfUserInGame(uuid, id.getId());
     }
 
 }
