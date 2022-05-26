@@ -178,7 +178,7 @@ class InGameWebsocketControllerTest {
 
     private void initializeGame() {
         System.out.println("initialize game");
-        gameUuid = gameService.createGame(player_1.getId());
+        gameUuid = gameService.createGame(player_1.getId(), "test");
         Game game = gameService.getGameByUuid(gameUuid);
 
         PlayerState player_1PlayerState = game.getPlayerState(player_1.getUsername());

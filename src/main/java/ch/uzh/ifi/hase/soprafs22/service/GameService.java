@@ -50,12 +50,13 @@ public class GameService {
         }
     }
 
-    public String createGame(Long userId) {
+    public String createGame(Long userId, String name) {
         Optional<User> optUser = this.userRepository.findById(userId);
         if(optUser.isPresent()){
             // Create Game and set passed user as player in that game, return game
             User user = optUser.get();
             Game newGame = new Game(user);
+            newGame.setName(name);
             newGame.getPlayerStates().get(0).setIsPlaying(true);
             newGame = gameRepository.saveAndFlush(newGame);
             
@@ -201,5 +202,10 @@ public class GameService {
         playerState.setPlayerStatus(false);
         gameRepository.saveAndFlush(game);
         return playerState;
+    }
+
+    public void endGame(Game game) {
+        game.endGame();
+        gameRepository.saveAndFlush(game);
     }
 }

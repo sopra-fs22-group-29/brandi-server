@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.PlayerState;
 
 public class GameGetDTO {
     private String uuid;
+    private String name;
     private Long id;
     private Boolean gameOver;
     private Boolean gameOn;
@@ -72,4 +73,11 @@ public class GameGetDTO {
         this.boardstate = boardstate;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

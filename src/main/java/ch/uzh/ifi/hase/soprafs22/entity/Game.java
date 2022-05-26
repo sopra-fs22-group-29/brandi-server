@@ -33,6 +33,9 @@ public class Game {
 
     @Column(nullable = false)
     private String uuid;
+
+    @Column(nullable = false)
+    private String name;
     
     @Column(nullable = false)
     private Boolean gameOver;
@@ -394,6 +397,14 @@ public class Game {
 
     public Integer getWinnerTeam() {
         return this.winnerTeam;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @JsonIgnore
