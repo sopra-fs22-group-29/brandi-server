@@ -150,10 +150,33 @@ public class GameTest {
         assertTrue(BoardState.homePoints.contains(targetBall.getPosition()));
     }
 
-    /* @Test
-    public void given_when_then() {
-        
-    } */
+    @Test
+    public void givenGame_whenJack_thenBallsSwapped() {
+        BoardState boardState = game.getBoardstate();
+        // GIVEN
+        card = new Card(Rank.JACK, Suit.CLUB);
+
+        Ball moveBall = new Ball(Color.RED, 9);
+        moveBall.setId(98L);
+        ballsSet.add(moveBall);
+        boardState.setBalls(ballsSet);
+
+        Integer destTile = 63;
+        Move move = new Move(card, moveBall.getId(), destTile);
+
+        Ball targetBall = boardState.getBallByPosition(destTile);
+        assertNotNull(targetBall);
+
+        Integer oldPosition = moveBall.getPosition();
+        Integer newPosition = targetBall.getPosition();
+
+        // WHEN: Move is made
+        game.makeMove(move);
+
+        //THEN
+        assertEquals(newPosition, moveBall.getPosition());
+        assertEquals(oldPosition, targetBall.getPosition());
+    }
 
 
     private void assertMoveIntoBasePossibleAndMakeMove(Ball ball) {

@@ -147,7 +147,9 @@ public class InGameWebsocketService {
         // User can go again (SEVEN), send marbles to make a move with
         } else if(move.getUser().getId().equals(nextUser.getPlayer().getId())
                 && game.getLastCardPlayed() != null 
-                && game.getLastCardPlayed().getId().equals(move.getCardId())){
+                && (game.getLastCardPlayed().equals(move.getPlayedCard())
+                    || game.getLastCardPlayed().getId().equals(move.getCardId()))){
+
             
             int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 

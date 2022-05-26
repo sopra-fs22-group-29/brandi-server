@@ -64,7 +64,7 @@ public class Game {
     // Needed for SEVEN
     private Integer holesTravelled;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "Card_id")
     private Card lastCardPlayed;
 
