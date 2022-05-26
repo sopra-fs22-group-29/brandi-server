@@ -90,7 +90,7 @@ public class Game {
         this.roundsPlayed = 0;
         this.deck = new Deck();
         this.deck.initialize();
-        this.unusedColors = new ArrayList<Color>(Arrays.asList(Color.values()));
+        this.unusedColors = new ArrayList<Color>(Arrays.asList(Color.GREEN, Color.RED, Color.YELLOW, Color.BLUE));
         this.playerStates = new ArrayList<PlayerState>();
         this.addPlayer(player);
         this.initBoardState();
