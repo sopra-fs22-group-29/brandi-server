@@ -1,11 +1,13 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import ch.uzh.ifi.hase.soprafs22.constant.Rank;
 import ch.uzh.ifi.hase.soprafs22.constant.Suit;
@@ -31,6 +33,12 @@ public class Deck {
     public Deck() {}
 
     public void initialize() {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+
 //        String url = baseUrl + "deck/new/shuffle/?deck_count=2&jokers_enabled=true";
         StringBuilder url = new StringBuilder("https://deckofcardsapi.com/api/deck/new/shuffle/?cards=");
         for(String suit : AVAILABLE_SUITS) {
@@ -40,7 +48,9 @@ public class Deck {
         }
         url.deleteCharAt(url.length() - 1);
         System.out.println(url.toString());
-        DeckDTO result = this.restTemplate.getForObject(url.toString(), DeckDTO.class);
+
+        DeckDTO result = this.restTemplate.exchange(url.toString(), HttpMethod.GET, entity, DeckDTO.class).getBody();
+//        DeckDTO result = this.restTemplate.getForObject(url.toString(), DeckDTO.class);
 
         this.deck_id = result.getDeck_id();
     }
