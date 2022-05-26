@@ -2,24 +2,31 @@
 Brändi Dog is an awesome board game played by 4 people and now you are able to play it online. It is exciting because not only luck but also tactics and strategy play an imporntant part. Two people form a team and play togehter with the aim to be the first who moved their marbles into their finish.
 
 ## Built with
-- [SpringBoot](https://spring.io/projects/spring-boot) - Java-Framwork
+- [SpringBoot](https://spring.io/projects/spring-boot) - Java-Framework
 - [Gradle](https://gradle.org) - Build automation tool
 - Java V.15
 
 ## Components
-### Creating a game 
-### Joining a game
-### Displaying inital state
-### Re-entering paused Games
-### Sending updates to players when someone makes a move
+### GameService
+- Role: Handles basic functions for the game like creating a game or fetching games
+- Main file: [GameService.java](https://github.com/sopra-fs22-group-29/brandi-server/blob/master/src/main/java/ch/uzh/ifi/hase/soprafs22/service/GameService.java)
+
+### GameLogicService
+- Role: Handles all the Game Logic.
+- Main file: [GameLogicService.java](https://github.com/sopra-fs22-group-29/brandi-server/blob/master/src/main/java/ch/uzh/ifi/hase/soprafs22/service/GameLogicService.java)
+
+### InGameWebsocketService
+- Role: Responsible for sending information about the game state to the users
+- Main file: [InGameWebsocketService.java](https://github.com/sopra-fs22-group-29/brandi-server/blob/master/src/main/java/ch/uzh/ifi/hase/soprafs22/service/InGameWebsocketService.java)
+
+### InGameWebsocketController
+- Role: handles incoming in game websocket calls like when someone leaves or joins a game or makes a move
+- Correlation: Uses methods of InGameWebsocketService, GameLogicService and GameService classes
+- Main file: [InGameWebsocketController.java](https://github.com/sopra-fs22-group-29/brandi-server/blob/master/src/main/java/ch/uzh/ifi/hase/soprafs22/controller/InGameWebsocketController.java)
+
 
 ## Getting started
 ### Spring Boot
-
--   Documentation: https://docs.spring.io/spring-boot/docs/current/reference/html/index.html
--   Guides: http://spring.io/guides
-    -   Building a RESTful Web Service: http://spring.io/guides/gs/rest-service/
-    -   Building REST services with Spring: http://spring.io/guides/tutorials/bookmarks/
 
 #### Setup with your IDE of choice
 
@@ -101,8 +108,10 @@ do the following:
 6. Step through the process one step at a time
 
 ### Release
+TO ADD!
 
 ## External Dependencies and Databases
+TO ADD!
 
 ## Roadmap
 - Exchange a card with your teammate everytime you get 6 cards
