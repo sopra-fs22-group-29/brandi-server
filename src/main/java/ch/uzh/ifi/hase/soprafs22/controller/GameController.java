@@ -66,7 +66,7 @@ public class GameController {
         List<Game> allGames = gameService.getGames();
         List<GameGetDTO> allGamesDTO = new ArrayList<>();
         for(Game game : allGames){
-            if(game.getPlayerState(principal.getName()) == null || game.isGameOver()) continue;
+            if(game.getPlayerState(principal.getName()) == null || game.getGameOver()) continue;
             allGamesDTO.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
         }
         

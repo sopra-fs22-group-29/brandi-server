@@ -80,9 +80,9 @@ public class User implements Serializable {
      */
     public Boolean addGame(Game addGame){
         // Only add game if no user has no other active game
-        if(addGame.isGameOn()){
+        if(addGame.getGameOn()){
             for(Game game: this.games){
-                if(game.isGameOn()) return false;
+                if(game.getGameOn()) return false;
             }
         }
         this.games.add(addGame);
@@ -115,6 +115,8 @@ public class User implements Serializable {
     /*
      * Returns game in list of games that is currently active, if more than one is active(shouldnt be possible), just returns first one
     */
+
+    // TODO: Should we remove the constraint on one active game per user?
     @JsonIgnore
     public Optional<Long> getCurrentGameId(){
         for(Game game : this.games){

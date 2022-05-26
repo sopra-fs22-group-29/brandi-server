@@ -35,6 +35,10 @@ public class Ball {
         return this.id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Color getColor() {
         return this.color;
     }

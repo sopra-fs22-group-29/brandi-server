@@ -110,11 +110,27 @@ public class InGameWebsocketService {
     
     public void notifyPlayersAfterMove(Game game, Move move, Set<Integer> marblesSet) {
         MoveGetDTO moveDTO = DTOMapper.INSTANCE.convertEntityToMoveGetDTO(move);
-        String username = move.getUser().getUsername();
-
+        
         this.notifyAllGameMembers("/client/move", game, moveDTO); 
-
+        
         PlayerState nextUser = game.getNextTurn();
+        
+        // Game is over: Send winning team to all users in game
+        if(game.getGameOver()){
+            Integer winningTeam = game.getWinnerTeam();
+            for(PlayerState state: game.getPlayerStates()){
+                String username = state.getPlayer().getUsername();
+                // TODO: Should we send string "You won/lost" or boolean here?
+                if(state.getTeam().equals(winningTeam)){
+                    this.notifySpecificUser("/client/gameOver", username, true);
+                } else{
+                    this.notifySpecificUser("/client/gameOver", username, false);
+                }
+            }
+            return;
+        }
+        
+        String username = move.getUser().getUsername();
 
         // No user can play any cards anymore -> Start new round
         if(nextUser == null){ 
@@ -131,7 +147,9 @@ public class InGameWebsocketService {
         // User can go again (SEVEN), send marbles to make a move with
         } else if(move.getUser().getId().equals(nextUser.getPlayer().getId())
                 && game.getLastCardPlayed() != null 
-                && game.getLastCardPlayed().getId().equals(move.getCardId())){
+                && (game.getLastCardPlayed().equals(move.getPlayedCard())
+                    || game.getLastCardPlayed().getId().equals(move.getCardId()))){
+
             
             int[] marbles = marblesSet.stream().mapToInt(Integer::intValue).toArray();
 

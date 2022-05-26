@@ -76,9 +76,11 @@ public class Game {
     // Needed for SEVEN
     private Integer holesTravelled;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "Card_id")
     private Card lastCardPlayed;
+
+    private Integer winnerTeam;
 
     public Game() {}
 
@@ -104,10 +106,16 @@ public class Game {
 
         // Information for initializing the balls with correct positions
         Hashtable<Color, List<Integer>> positionDict = new Hashtable<>();
-        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
+       /*  positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(80, 81, 82, 83)));
         positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(84, 85, 86, 87)));
         positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(88, 89, 90, 91)));
-        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(92, 93, 94, 95))); */
+
+        // Used to test gameWinning logic
+        positionDict.put(Color.GREEN, new ArrayList<>(Arrays.asList(58, 65, 66, 67)));
+        positionDict.put(Color.RED, new ArrayList<>(Arrays.asList(10, 69, 70, 71)));
+        positionDict.put(Color.YELLOW, new ArrayList<>(Arrays.asList(72, 73, 74, 75)));
+        positionDict.put(Color.BLUE, new ArrayList<>(Arrays.asList(42, 77, 78, 79)));
 
         // Add 4 balls for each playerColor
         for(Color color: Color.values()){
@@ -123,17 +131,10 @@ public class Game {
         PlayerHand playerHand = new PlayerHand();
         playerHand.drawCards(this.deck.drawCards(6));
 
-        //TODO: Should probably be moved elsewhere
-        Map<Color, Integer> ColorToTeam = Map.of(
-            Color.GREEN, 0,
-            Color.BLUE, 1,
-            Color.RED, 1,
-            Color.YELLOW, 0
-        );
         // Pop one color from unused colors, fallback color is yellow (seems like a bad thing to do)
         Color userColor = unusedColors.isEmpty() ? Color.YELLOW : unusedColors.remove(0);
 
-        Integer team = ColorToTeam.get(userColor);
+        Integer team = getTeamByColor(userColor);
         this.playerStates.add(new PlayerState(player, team, userColor, true, playerHand));
     }
 
@@ -214,7 +215,11 @@ public class Game {
      * @return Boolean moveExecuted
      */
     public Boolean makeMove(Move move){
-        Boolean moveExecuted = false;
+
+        if(this.gameOver){
+            System.out.println("Game is already over, cannot make a move anymore!");
+            return false;
+        }
 
         Ball ball = null;
         for(Ball b: this.boardstate.getBalls()){
@@ -279,9 +284,11 @@ public class Game {
             }
         }
 
-        //FIXME: Verify that move is a valid move
         ball.setPosition(move.getDestinationTile());
-        return moveExecuted;        
+
+        checkGameOver();
+
+        return true;        
     }
 
     private void nextPlayer(){
@@ -308,31 +315,26 @@ public class Game {
         return this.playerStates.get(this.activePlayer);
     }
 
-    // return true if all players have no more cards
-    public Boolean allPlayersFinished(){
-        for(PlayerState playerstate: this.playerStates){
-            if(!playerstate.getPlayerHand().getActiveCards().isEmpty()) return false;
-        }
-        return true;
-    }
-
-    // Check if all players in game are active in this game, only works if game is started already
-    public Boolean checkAllPlayersInGame(){
-        for(PlayerState playerState: this.playerStates){
-            Optional<Long> optGameId = playerState.getCurrentGameId();
-            if(optGameId.isPresent()){
-                Long gameId = optGameId.get();
-                if(gameId.equals(this.id)){
-                    continue;
-                } else {
-                    System.out.println("User is active in a different game");
-                    return false;
+    public Boolean checkGameOver(){
+        Boolean teamZeroFinished = true;
+        Boolean teamOneFinished = true;
+        Set<Ball> balls = this.boardstate.getBalls();
+        for(Ball ball: balls){
+            if(!ball.checkBallInBase()){
+                if(getTeamByColor(ball.getColor()).equals(0)) {
+                    teamZeroFinished = false;
+                } else{
+                    teamOneFinished = false;
                 }
-            } else{
-                System.out.println("Couldnt find an active game for user");
             }
         }
-        return true;
+
+        if(teamOneFinished || teamZeroFinished){
+            this.gameOver = true;
+            this.winnerTeam = teamZeroFinished ? 0 : 1;
+            System.out.println("!!! Game is over, team " + winnerTeam + " won!!! ");
+        }
+        return teamZeroFinished || teamOneFinished;
     }
 
     public void pauseGame(){
@@ -351,20 +353,8 @@ public class Game {
         return this.id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUuid() {
         return this.uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public Boolean isGameOver() {
-        return this.gameOver;
     }
 
     public Boolean getGameOver() {
@@ -375,48 +365,20 @@ public class Game {
         this.gameOver = gameOver;
     }
 
-    public Boolean isGameOn() {
-        return this.gameOn;
-    }
-
     public Boolean getGameOn() {
         return this.gameOn;
-    }
-
-    public void setGameOn(Boolean gameOn) {
-        this.gameOn = gameOn;
     }
 
     public Integer getRoundsPlayed() {
         return this.roundsPlayed;
     }
 
-    public void setRoundsPlayed(Integer roundsPlayed) {
-        this.roundsPlayed = roundsPlayed;
-    }
-
     public List<PlayerState> getPlayerStates() {
         return this.playerStates;
     }
 
-    public void setPlayerStates(ArrayList<PlayerState> playerStates) {
-        this.playerStates = playerStates;
-    }
-
     public BoardState getBoardstate() {
         return this.boardstate;
-    }
-
-    public void setBoardstate(BoardState boardstate) {
-        this.boardstate = boardstate;
-    }
-
-    public Deck getDeck() {
-        return this.deck;
-    }
-
-    public void setDeck(Deck deck) {
-        this.deck = deck;
     }
 
     public Integer getHolesTravelled() {
@@ -442,8 +404,8 @@ public class Game {
         return this.lastCardPlayed;
     }
 
-    public void setLastCardPlayed(Card lastCardPlayed) {
-        this.lastCardPlayed = lastCardPlayed;
+    public Integer getWinnerTeam() {
+        return this.winnerTeam;
     }
 
     public String getName() {
@@ -488,5 +450,16 @@ public class Game {
             }
         }
         return userColor;
+    }
+
+    @JsonIgnore
+    public Integer getTeamByColor(Color color){
+        Map<Color, Integer> ColorToTeam = Map.of(
+            Color.GREEN, 0,
+            Color.BLUE, 1,
+            Color.RED, 1,
+            Color.YELLOW, 0
+        );
+        return ColorToTeam.get(color);
     }
 }

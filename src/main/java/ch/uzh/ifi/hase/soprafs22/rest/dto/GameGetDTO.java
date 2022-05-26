@@ -33,20 +33,12 @@ public class GameGetDTO {
         this.id = id;
     }
 
-    public Boolean isGameOver() {
-        return this.gameOver;
-    }
-
     public Boolean getGameOver() {
         return this.gameOver;
     }
 
     public void setGameOver(Boolean gameOver) {
         this.gameOver = gameOver;
-    }
-
-    public Boolean isGameOn() {
-        return this.gameOn;
     }
 
     public Boolean getGameOn() {
