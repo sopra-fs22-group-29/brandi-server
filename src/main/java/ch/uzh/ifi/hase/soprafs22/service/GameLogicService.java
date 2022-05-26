@@ -18,6 +18,10 @@ public class GameLogicService {
     public Set<Integer> highlightBalls (Game game, Rank cardRank, Set<Ball> balls, Color playerColor, Color teamMateColor) {
         Set<Integer> highlightedBalls = new HashSet<>();
 
+        if (getFreeBaseHoles(playerColor, balls).isEmpty()) {
+            System.out.println("Switched colors");
+            playerColor = teamMateColor;}
+
         for (Ball ball : balls) {
 
             Set<Integer> possibleMoves = getPossibleMoves(game, cardRank, balls, ball);
@@ -338,6 +342,38 @@ public class GameLogicService {
         return ball.getPosition();
     }
 
+    public static Set<Integer> getFreeBaseHoles(Color color, Set<Ball> balls) {
+
+        if (color == Color.GREEN) {
+            Set<Integer> baseHomeHoles = new HashSet<>(Set.of(64,65,66,67));
+            for (Ball b : balls) {
+                baseHomeHoles.remove(b.getPosition());
+            }
+            return baseHomeHoles;
+        }
+        else if (color == Color.RED) {
+            Set<Integer> baseHomeHoles = new HashSet<>(Set.of(68,69,70,71));
+            for (Ball b : balls) {
+                baseHomeHoles.remove(b.getPosition());
+            }
+            return baseHomeHoles;
+        }
+        else if (color == Color.YELLOW) {
+            Set<Integer> baseHomeHoles = new HashSet<>(Set.of(72,73,74,75));
+            for (Ball b : balls) {
+                baseHomeHoles.remove(b.getPosition());
+            }
+            return baseHomeHoles;
+        }
+        else {
+            Set<Integer> baseHomeHoles = new HashSet<>(Set.of(76,77,78,79));
+            for (Ball b : balls) {
+                baseHomeHoles.remove(b.getPosition());
+            }
+            return baseHomeHoles;
+        }
+    }
+
     public static Set<Integer> getFreeHomeHoles(Color color, Set<Ball> balls) {
 
         if (color == Color.GREEN) {
@@ -630,6 +666,5 @@ public class GameLogicService {
 
         return true;
     }
-
 
 }
