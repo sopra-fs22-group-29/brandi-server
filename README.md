@@ -111,21 +111,20 @@ do the following:
 The project is automatically deployed after every change of the master branch, therefore we implemented a requirement, 
 such that each change must first be reviewed and approved by at least one other developer.
 
-## External Dependencies and Databases
-TO ADD!
+## External Dependencies
 
-The project implements the [deckofcardsapi](https://deckofcardsapi.com)
-- https://github.com/crobertsbmw/deckofcards
+The project implements the [deckofcardsapi](https://deckofcardsapi.com) to manage the cards used for the game.<br>
+Find it on Github: https://github.com/crobertsbmw/deckofcards
 
-to manage the cards used for the game.
+
 
 ## Roadmap
 - Exchange a card with your teammate everytime you get 6 cards
 - Ranking of all users and played games
 - Alternative game modes:
-- - time limited games
-- - random actions on board
-- - even cooler animations
+    - time limited games
+    - random actions on board
+    - even cooler animations
 
 ## Authors
 - [Elena Graf](https://github.com/ElenaGrafUZH)
