@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs22;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RestController
 @SpringBootApplication
-@PropertySource("classpath:application-${spring.profiles.active:default}.properties")
 public class Application {
 
   public static void main(String[] args) {
