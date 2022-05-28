@@ -235,11 +235,12 @@ public class Game {
         Ball targetBall = this.boardstate.getBallByPosition(move.getDestinationTile());
 
         if (targetBall != null) {
+
             // If ball at destination then move it back to home
             if(move.getPlayedCard().getRank().equals(Rank.JACK)){
                 // Swap balls
                 GameLogicService.swapBalls(ball, targetBall, this.boardstate.getBalls());
-                
+
                 move.setTargetBallNewPosition(targetBall.getPosition());
                 move.setTargetBallId(targetBall.getId());
 
@@ -259,6 +260,20 @@ public class Game {
         
 
         move.setHolesTravelled(GameLogicService.getHolesTravelled(move.getDestinationTile(), ball.getPosition(), true).stream().mapToInt(i->i).toArray());
+
+        if (move.getPlayedCard().getRank().equals(Rank.JACK)) {
+
+            int[] moves = move.getHolesTravelled();
+            int length = moves.length;
+            int [] tempArray = new int[length+1];
+
+            tempArray[1] = ball.getPosition();
+
+            tempArray[0] = targetBall.getPosition();
+
+            move.setHolesTravelled(tempArray);
+
+        }
 
         // Move balls travelled over with a seven back to base
         if(move.getPlayedCard().getRank().equals(Rank.SEVEN)){
