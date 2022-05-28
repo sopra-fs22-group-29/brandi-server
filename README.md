@@ -121,6 +121,7 @@ Find it on Github: https://github.com/crobertsbmw/deckofcards
 ## Roadmap
 - Exchange a card with your teammate everytime you get 6 cards
 - Ranking of all users and played games
+- Implement the Joker card
 - Alternative game modes:
     - time limited games
     - random actions on board
